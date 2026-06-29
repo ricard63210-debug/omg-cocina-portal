@@ -1,0 +1,439 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===========================
+   CSS CUSTOM PROPERTIES
+   =========================== */
+:root {
+  --pink: #E91E8C;
+  --pink-light: #FF6BB5;
+  --pink-dark: #C0166E;
+  --gold: #D4AF37;
+  --gold-light: #F0D060;
+  --gold-dark: #A88A20;
+  --black: #0A0A0A;
+  --black-soft: #121212;
+  --black-card: #1A1A1A;
+  --black-border: #2A2A2A;
+  --white: #F5F5F5;
+}
+
+/* ===========================
+   GLOBAL BASE
+   =========================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--black);
+  color: var(--white);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ===========================
+   CUSTOM SCROLLBAR
+   =========================== */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--black-soft);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--pink-dark);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--pink);
+}
+
+/* ===========================
+   TYPOGRAPHY
+   =========================== */
+h1, h2, h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+  line-height: 1.2;
+}
+
+/* ===========================
+   SELECTION COLOR
+   =========================== */
+::selection {
+  background: var(--pink);
+  color: white;
+}
+
+/* ===========================
+   UTILITY CLASSES
+   =========================== */
+.text-gradient-pink-gold {
+  background: linear-gradient(135deg, var(--pink) 0%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-gold {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 60%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.border-gradient {
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  position: relative;
+}
+
+.glow-pink {
+  box-shadow: 0 0 30px rgba(233, 30, 140, 0.3), 0 0 60px rgba(233, 30, 140, 0.1);
+}
+
+.glow-gold {
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.3), 0 0 60px rgba(212, 175, 55, 0.1);
+}
+
+/* Glass card */
+.glass-card {
+  background: rgba(26, 26, 26, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(233, 30, 140, 0.15);
+}
+
+/* Pink button */
+.btn-pink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  background: linear-gradient(135deg, var(--pink) 0%, var(--pink-dark) 100%);
+  color: white;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-decoration: none;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+}
+.btn-pink:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(233, 30, 140, 0.45);
+  filter: brightness(1.1);
+}
+.btn-pink:active {
+  transform: translateY(0);
+}
+
+/* Gold outline button */
+.btn-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  background: transparent;
+  color: var(--gold);
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  border-radius: 50px;
+  border: 1.5px solid var(--gold);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-decoration: none;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+}
+.btn-gold:hover {
+  background: var(--gold);
+  color: var(--black);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+}
+
+/* Section title */
+.section-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+/* Section wrapper */
+.section-wrapper {
+  padding: 5rem 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Rose SVG decoration */
+.rose-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 3rem;
+  justify-content: center;
+}
+
+.rose-divider::before,
+.rose-divider::after {
+  content: '';
+  flex: 1;
+  max-width: 200px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+/* Star rating */
+.star {
+  cursor: pointer;
+  transition: transform 0.15s ease;
+  font-size: 1.5rem;
+}
+.star:hover {
+  transform: scale(1.2);
+}
+
+/* Chatbot */
+.chat-bubble {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 1000;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+  border: 2px solid var(--gold);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(233, 30, 140, 0.5);
+  transition: all 0.25s ease;
+  animation: float 3s ease-in-out infinite;
+}
+.chat-bubble:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 30px rgba(233, 30, 140, 0.7);
+}
+
+/* Menu tabs */
+.menu-tab {
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  border: 1px solid var(--black-border);
+  color: #888;
+  background: transparent;
+}
+.menu-tab:hover {
+  border-color: var(--pink);
+  color: var(--pink-light);
+}
+.menu-tab.active {
+  background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+  border-color: var(--pink);
+  color: white;
+  box-shadow: 0 4px 15px rgba(233, 30, 140, 0.35);
+}
+
+/* Menu item card */
+.menu-item-card {
+  background: var(--black-card);
+  border: 1px solid var(--black-border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  transition: all 0.25s ease;
+}
+.menu-item-card:hover {
+  border-color: rgba(233, 30, 140, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+/* Promotion card */
+.promo-card {
+  background: linear-gradient(135deg, rgba(233, 30, 140, 0.08) 0%, rgba(212, 175, 55, 0.05) 100%);
+  border: 1px solid rgba(233, 30, 140, 0.25);
+  border-radius: 16px;
+  padding: 2rem;
+  transition: all 0.3s ease;
+}
+.promo-card:hover {
+  border-color: rgba(212, 175, 55, 0.5);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(233, 30, 140, 0.15);
+}
+
+/* Review card */
+.review-card {
+  background: var(--black-card);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 16px;
+  padding: 1.75rem;
+  transition: all 0.3s ease;
+}
+.review-card:hover {
+  border-color: rgba(212, 175, 55, 0.5);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(212, 175, 55, 0.1);
+}
+
+/* Form elements */
+.form-input {
+  width: 100%;
+  background: var(--black-card);
+  border: 1px solid var(--black-border);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  color: var(--white);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease;
+  outline: none;
+}
+.form-input:focus {
+  border-color: var(--pink);
+  box-shadow: 0 0 0 3px rgba(233, 30, 140, 0.1);
+}
+.form-input::placeholder {
+  color: #555;
+}
+
+select.form-input option {
+  background: var(--black-card);
+  color: var(--white);
+}
+
+/* Chat messages */
+.chat-message-user {
+  align-self: flex-end;
+  background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+  color: white;
+  padding: 0.6rem 1rem;
+  border-radius: 18px 18px 4px 18px;
+  max-width: 80%;
+  font-size: 0.9rem;
+  word-wrap: break-word;
+}
+.chat-message-bot {
+  align-self: flex-start;
+  background: var(--black-border);
+  color: var(--white);
+  padding: 0.6rem 1rem;
+  border-radius: 18px 18px 18px 4px;
+  max-width: 80%;
+  font-size: 0.9rem;
+  word-wrap: break-word;
+  border: 1px solid rgba(233, 30, 140, 0.15);
+}
+
+/* Typing indicator */
+.typing-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--pink);
+  animation: typingBounce 1.2s infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-6px); opacity: 1; }
+}
+
+/* ===========================
+   HOURS BAR
+   =========================== */
+.hours-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10, 10, 10, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+}
+
+/* ===========================
+   HERO SECTION SPECIFICS
+   =========================== */
+.hero-glow-1 {
+  position: absolute;
+  top: -10%;
+  left: -15%;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(233, 30, 140, 0.25) 0%, transparent 70%);
+  animation: glowPulse 4s ease-in-out infinite;
+  pointer-events: none;
+}
+.hero-glow-2 {
+  position: absolute;
+  bottom: -15%;
+  right: -10%;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.18) 0%, transparent 70%);
+  animation: glowPulse 5s ease-in-out infinite 1.5s;
+  pointer-events: none;
+}
+
+/* ===========================
+   MOBILE RESPONSIVE
+   =========================== */
+@media (max-width: 640px) {
+  .section-wrapper {
+    padding: 3.5rem 1rem;
+  }
+  .btn-pink, .btn-gold {
+    padding: 0.65rem 1.3rem;
+    font-size: 0.875rem;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
