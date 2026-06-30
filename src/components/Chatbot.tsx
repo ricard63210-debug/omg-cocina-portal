@@ -75,7 +75,7 @@ export default function Chatbot({ externalOpen, onExternalClose }: ChatbotProps)
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'claude-3-5-sonnet-20241022',
+          model: 'claude-sonnet-4-6',
           max_tokens: 512,
           system: SYSTEM_PROMPT,
           messages: [
@@ -90,7 +90,10 @@ export default function Chatbot({ externalOpen, onExternalClose }: ChatbotProps)
         if (err.error === 'Chat API configuration error') {
           throw new Error('API_KEY_MISSING')
         }
-        throw new Error(err.error?.message || err.error || `HTTP ${response.status}`)
+        const status = err.error?.status || response.status
+        const type = err.error?.type || 'api_error'
+        const msg = err.error?.message || err.error || JSON.stringify(err)
+        throw new Error(`[Status ${status} | ${type}] ${msg}`)
       }
 
       const data = await response.json()
