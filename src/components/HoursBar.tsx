@@ -4,11 +4,11 @@ interface HourEntry {
 }
 
 const HOURS: HourEntry[] = [
-  { day: 'Lun', hours: '9am–7pm' },
-  { day: 'Mar–Jue', hours: '9am–8pm' },
-  { day: 'Vie', hours: '9am–7pm' },
-  { day: 'Sáb', hours: '10am–3pm' },
-  { day: 'Dom', hours: 'Cerrado' },
+  { day: 'Mon', hours: '9am–7pm' },
+  { day: 'Tue–Thu', hours: '9am–8pm' },
+  { day: 'Fri', hours: '9am–7pm' },
+  { day: 'Sat', hours: '10am–3pm' },
+  { day: 'Sun', hours: 'Closed' },
 ]
 
 export default function HoursBar() {
@@ -20,7 +20,7 @@ export default function HoursBar() {
             className="text-xs font-bold tracking-widest uppercase mr-2 hidden sm:inline"
             style={{ color: '#E91E8C' }}
           >
-            🕐 Horarios
+            🕐 Hours
           </span>
           {HOURS.map((entry, i) => (
             <div key={i} className="flex items-center gap-1.5">
@@ -29,7 +29,7 @@ export default function HoursBar() {
               </span>
               <span
                 className="text-xs"
-                style={{ color: entry.hours === 'Cerrado' ? 'rgba(245,245,245,0.3)' : 'rgba(245,245,245,0.7)' }}
+                style={{ color: entry.hours === 'Closed' ? 'rgba(245,245,245,0.3)' : 'rgba(245,245,245,0.7)' }}
               >
                 {entry.hours}
               </span>

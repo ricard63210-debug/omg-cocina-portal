@@ -1,9 +1,6 @@
 import { SectionDivider } from './RoseDecor'
 import { CalendarDays, Music } from 'lucide-react'
 
-// =====================================================
-// UPDATE PROMOTIONS HERE — easy to edit!
-// =====================================================
 interface Promo {
   id: string
   emoji: string
@@ -20,9 +17,9 @@ const PROMOTIONS: Promo[] = [
     id: 'taco-tuesday',
     emoji: '🌮',
     title: 'Taco Tuesday',
-    subtitle: 'Cada martes',
-    description: 'Próximamente — Precios especiales en tacos todos los martes. ¡Mantente al tanto!',
-    badge: 'Próximamente',
+    subtitle: 'Every Tuesday',
+    description: 'Coming Soon — Special prices on tacos every Tuesday. Stay tuned!',
+    badge: 'Coming Soon',
     badgeColor: '#E91E8C',
     comingSoon: true,
   },
@@ -30,13 +27,12 @@ const PROMOTIONS: Promo[] = [
     id: 'happy-hour',
     emoji: '🍹',
     title: 'Happy Hour',
-    subtitle: 'Próximas fechas',
-    description: 'Próximamente — Descuentos especiales en bebidas y aperitivos. ¡No te lo pierdas!',
-    badge: 'Próximamente',
+    subtitle: 'Coming soon',
+    description: 'Coming Soon — Special discounts on drinks and appetizers. Don\'t miss out!',
+    badge: 'Coming Soon',
     badgeColor: '#D4AF37',
     comingSoon: true,
   },
-  // To add new promos, duplicate an entry above this comment
 ]
 
 export default function Promotions() {
@@ -46,7 +42,7 @@ export default function Promotions() {
       style={{ background: 'linear-gradient(180deg, #0A0A0A 0%, rgba(233,30,140,0.04) 50%, #0A0A0A 100%)' }}
     >
       <div className="section-wrapper">
-        <SectionDivider title="Promociones & Eventos" />
+        <SectionDivider title="Promotions & Events" />
 
         <div className="grid gap-6 md:grid-cols-2 max-w-3xl mx-auto">
           {PROMOTIONS.map(promo => (
@@ -105,7 +101,7 @@ export default function Promotions() {
                     color: 'rgba(245,245,245,0.3)',
                   }}
                 >
-                  Disponible pronto — ¡Síguenos para más info!
+                  Available soon — Follow us for updates!
                 </div>
               )}
             </div>
@@ -114,17 +110,26 @@ export default function Promotions() {
 
         {/* Social CTA */}
         <div className="text-center mt-10">
-          <p className="text-sm mb-4" style={{ color: 'rgba(245,245,245,0.45)' }}>
-            ¡Síguenos en Instagram para las últimas promociones y eventos!
+          <p className="text-sm mb-4 font-medium" style={{ color: 'rgba(245,245,245,0.45)' }}>
+            Follow us on Instagram for the latest promotions and events!
           </p>
-          <a
-            href="https://www.instagram.com/omg.cocina/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-pink"
-          >
-            📸 @omg.cocina
-          </a>
+          <div className="flex justify-center">
+            <a
+              href="https://www.instagram.com/omg.cocina/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-pink flex items-center justify-center p-3 rounded-full hover:scale-105"
+              style={{ width: '48px', height: '48px', minWidth: '48px' }}
+              aria-label="Instagram Link"
+            >
+              {/* Official Instagram Logo without letters */}
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+              </svg>
+            </a>
+          </div>
         </div>
       </div>
     </section>

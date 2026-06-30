@@ -7,7 +7,7 @@ import MenuPage from './pages/MenuPage'
 import ReviewsPage from './pages/ReviewsPage'
 import EventosPage from './pages/EventosPage'
 import FeedbackPage from './pages/FeedbackPage'
-import SocialPage from './pages/SocialPage'
+import ContactPage from './pages/ContactPage'
 
 // Global components
 import Chatbot from './components/Chatbot'
@@ -23,7 +23,7 @@ function App() {
         <Route path="/reviews" element={<ReviewsPage />} />
         <Route path="/eventos" element={<EventosPage />} />
         <Route path="/feedback" element={<FeedbackPage />} />
-        <Route path="/social" element={<SocialPage />} />
+        <Route path="/contact" element={<ContactPage />} />
         {/* Catch-all → home */}
         <Route path="*" element={<Home onOpenChat={() => setChatOpen(true)} />} />
       </Routes>

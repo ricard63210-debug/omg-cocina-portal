@@ -3,8 +3,8 @@ import { Star, Send, CheckCircle, AlertCircle } from 'lucide-react'
 import { SectionDivider } from './RoseDecor'
 import { supabase } from '../lib/supabase'
 
-type Category = 'Comida' | 'Servicio' | 'Ambiente' | 'Otro'
-const CATEGORIES: Category[] = ['Comida', 'Servicio', 'Ambiente', 'Otro']
+type Category = 'Food' | 'Service' | 'Atmosphere' | 'Other'
+const CATEGORIES: Category[] = ['Food', 'Service', 'Atmosphere', 'Other']
 
 interface FormState {
   name: string
@@ -29,11 +29,11 @@ export default function Feedback() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (form.rating === 0) {
-      setErrorMsg('Por favor selecciona una calificación.')
+      setErrorMsg('Please select a rating.')
       return
     }
     if (!form.message.trim()) {
-      setErrorMsg('Por favor escribe un comentario.')
+      setErrorMsg('Please write a comment.')
       return
     }
     setErrorMsg('')
@@ -52,7 +52,7 @@ export default function Feedback() {
     } catch (err) {
       console.error('Feedback error:', err)
       setStatus('error')
-      setErrorMsg('Hubo un error. Por favor intenta de nuevo.')
+      setErrorMsg('An error occurred. Please try again.')
     }
   }
 
@@ -64,7 +64,7 @@ export default function Feedback() {
       }}
     >
       <div className="section-wrapper">
-        <SectionDivider title="Tu Opinión Nos Importa 💬" />
+        <SectionDivider title="Your Feedback Matters 💬" />
 
         <div
           className="max-w-xl mx-auto rounded-2xl p-8"
@@ -82,10 +82,10 @@ export default function Feedback() {
                 className="font-display text-xl font-semibold mb-2"
                 style={{ color: '#E91E8C' }}
               >
-                ¡Gracias por tu comentario!
+                Thank you for your feedback!
               </p>
               <p className="text-sm" style={{ color: 'rgba(245,245,245,0.6)' }}>
-                Lo revisaremos pronto. 🌸
+                We will review it soon. 🌸
               </p>
               <button
                 className="btn-pink mt-6"
@@ -94,7 +94,7 @@ export default function Feedback() {
                   setStatus('idle')
                 }}
               >
-                Enviar otro comentario
+                Submit another comment
               </button>
             </div>
           ) : (
@@ -106,13 +106,13 @@ export default function Feedback() {
                   className="block text-xs font-semibold mb-1.5 uppercase tracking-wider"
                   style={{ color: 'rgba(245,245,245,0.6)' }}
                 >
-                  Nombre <span style={{ color: 'rgba(245,245,245,0.3)' }}>(opcional)</span>
+                  Name <span style={{ color: 'rgba(245,245,245,0.3)' }}>(optional)</span>
                 </label>
                 <input
                   id="feedback-name"
                   type="text"
                   className="form-input"
-                  placeholder="Tu nombre..."
+                  placeholder="Your name..."
                   value={form.name}
                   onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                 />
@@ -124,15 +124,15 @@ export default function Feedback() {
                   className="text-xs font-semibold mb-2 uppercase tracking-wider"
                   style={{ color: 'rgba(245,245,245,0.6)' }}
                 >
-                  Calificación <span style={{ color: '#E91E8C' }}>*</span>
+                  Rating <span style={{ color: '#E91E8C' }}>*</span>
                 </p>
-                <div className="flex gap-2" role="group" aria-label="Calificación de 1 a 5 estrellas">
+                <div className="flex gap-2" role="group" aria-label="Rating from 1 to 5 stars">
                   {[1, 2, 3, 4, 5].map(star => (
                     <button
                       key={star}
                       type="button"
                       id={`star-${star}`}
-                      aria-label={`${star} estrella${star > 1 ? 's' : ''}`}
+                      aria-label={`${star} star${star > 1 ? 's' : ''}`}
                       aria-pressed={form.rating >= star}
                       className="star transition-transform"
                       style={{ color: (hoverRating || form.rating) >= star ? '#D4AF37' : '#333' }}
@@ -157,7 +157,7 @@ export default function Feedback() {
                   className="block text-xs font-semibold mb-1.5 uppercase tracking-wider"
                   style={{ color: 'rgba(245,245,245,0.6)' }}
                 >
-                  Categoría
+                  Category
                 </label>
                 <select
                   id="feedback-category"
@@ -165,7 +165,7 @@ export default function Feedback() {
                   value={form.category}
                   onChange={e => setForm(f => ({ ...f, category: e.target.value as Category | '' }))}
                 >
-                  <option value="">Seleccionar categoría...</option>
+                  <option value="">Select category...</option>
                   {CATEGORIES.map(cat => (
                     <option key={cat} value={cat}>{cat}</option>
                   ))}
@@ -179,13 +179,13 @@ export default function Feedback() {
                   className="block text-xs font-semibold mb-1.5 uppercase tracking-wider"
                   style={{ color: 'rgba(245,245,245,0.6)' }}
                 >
-                  Comentario <span style={{ color: '#E91E8C' }}>*</span>
+                  Message <span style={{ color: '#E91E8C' }}>*</span>
                 </label>
                 <textarea
                   id="feedback-message"
                   className="form-input resize-none"
                   rows={4}
-                  placeholder="Cuéntanos tu experiencia..."
+                  placeholder="Tell us about your experience..."
                   value={form.message}
                   onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
                 />
@@ -215,12 +215,12 @@ export default function Feedback() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                     </svg>
-                    Enviando...
+                    Submitting...
                   </span>
                 ) : (
                   <>
                     <Send size={16} />
-                    Enviar Comentario
+                    Submit Feedback
                   </>
                 )}
               </button>

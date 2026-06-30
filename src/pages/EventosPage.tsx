@@ -3,7 +3,7 @@ import Promotions from '../components/Promotions'
 
 export default function EventosPage() {
   return (
-    <PageLayout title="Eventos" emoji="📅">
+    <PageLayout title="Events" emoji="📅">
       <Promotions />
     </PageLayout>
   )

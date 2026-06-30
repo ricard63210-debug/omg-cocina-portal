@@ -1,5 +1,5 @@
 import { MapPin, Phone, ExternalLink } from 'lucide-react'
-import { RoseSVG } from './RoseDecor'
+import logo from '../assets/logo.png'
 
 export default function Footer() {
   return (
@@ -15,7 +15,7 @@ export default function Footer() {
         {/* Brand */}
         <div className="text-center mb-10">
           <div className="flex items-center justify-center gap-3 mb-2">
-            <RoseSVG size={28} />
+            <img src={logo} alt="Logo" className="w-7 h-7 object-contain" />
             <h2
               className="font-display font-bold"
               style={{
@@ -28,7 +28,7 @@ export default function Footer() {
             >
               OMG Cocina
             </h2>
-            <RoseSVG size={28} />
+            <img src={logo} alt="Logo" className="w-7 h-7 object-contain" />
           </div>
           <p className="text-sm font-display italic" style={{ color: '#D4AF37' }}>
             Fresh Mexican Flavors · Sacramento, CA
@@ -40,7 +40,7 @@ export default function Footer() {
           {/* Contact info */}
           <div>
             <h3 className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: '#E91E8C' }}>
-              Contáctanos
+              Contact Us
             </h3>
             <div className="space-y-3">
               <a
@@ -80,21 +80,21 @@ export default function Footer() {
           {/* Hours */}
           <div>
             <h3 className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: '#E91E8C' }}>
-              Horarios
+              Hours
             </h3>
             <div className="space-y-1.5 text-sm">
               {[
-                ['Lunes', '9am–7pm'],
-                ['Mar–Jue', '9am–8pm'],
-                ['Viernes', '9am–7pm'],
-                ['Sábado', '10am–3pm'],
-                ['Domingo', 'Cerrado'],
+                ['Monday', '9am–7pm'],
+                ['Tue–Thu', '9am–8pm'],
+                ['Friday', '9am–7pm'],
+                ['Saturday', '10am–3pm'],
+                ['Sunday', 'Closed'],
               ].map(([day, time]) => (
                 <div key={day} className="flex justify-between gap-4 mx-auto" style={{ maxWidth: '160px' }}>
                   <span style={{ color: 'rgba(245,245,245,0.5)' }}>{day}</span>
                   <span
                     className="font-medium"
-                    style={{ color: time === 'Cerrado' ? 'rgba(245,245,245,0.2)' : '#D4AF37' }}
+                    style={{ color: time === 'Closed' ? 'rgba(245,245,245,0.2)' : '#D4AF37' }}
                   >
                     {time}
                   </span>
@@ -106,7 +106,7 @@ export default function Footer() {
           {/* Social */}
           <div>
             <h3 className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: '#E91E8C' }}>
-              Síguenos
+              Follow Us
             </h3>
             <div className="flex flex-col items-center gap-3">
               <a
@@ -135,7 +135,7 @@ export default function Footer() {
               >
                 {/* Facebook SVG */}
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-                Facebook — Próximamente
+                Facebook — Coming Soon
               </div>
             </div>
           </div>
@@ -151,7 +151,7 @@ export default function Footer() {
             className="btn-pink text-base px-10 py-4 inline-flex items-center gap-2"
           >
             <ExternalLink size={18} />
-            Ordenar en Uber Eats 🛵
+            Order on Uber Eats 🛵
           </a>
         </div>
 

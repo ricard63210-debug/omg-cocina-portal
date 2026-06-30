@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
-import { RoseSVG } from './RoseDecor'
+import logo from '../assets/logo.png'
 
 interface PageLayoutProps {
   title: string
@@ -29,14 +29,14 @@ export default function PageLayout({ title, emoji, children }: PageLayoutProps) 
             background: 'rgba(233,30,140,0.08)',
             border: '1px solid rgba(233,30,140,0.2)',
           }}
-          aria-label="Volver al inicio"
+          aria-label="Back to home"
         >
           <ArrowLeft size={14} />
-          Inicio
+          Home
         </Link>
 
         <div className="flex items-center gap-2 ml-auto">
-          <RoseSVG size={18} />
+          <img src={logo} alt="Logo" className="w-5 h-5 object-contain" />
           <h1
             className="font-display font-bold text-base"
             style={{

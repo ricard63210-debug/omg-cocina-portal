@@ -14,11 +14,11 @@ export default function Menu() {
         className="section-wrapper"
         style={{ maxWidth: '1200px', margin: '0 auto', padding: '5rem 1.5rem 3rem' }}
       >
-        <SectionDivider title="Menú Digital" />
+        <SectionDivider title="Digital Menu" />
 
-        {/* Tab navigation */}
+        {/* Tab navigation - horizontal scroll slide bar */}
         <div
-          className="flex flex-wrap gap-2 justify-center mb-8"
+          className="flex gap-2 overflow-x-auto pb-4 mb-8 scroll-smooth no-scrollbar select-none justify-start md:justify-center px-1"
           role="tablist"
           aria-label="Menu categories"
         >
@@ -137,7 +137,7 @@ export default function Menu() {
 
 function MeatSelector() {
   const [open, setOpen] = useState(false)
-  const [selected, setSelected] = useState<string>('Seleccionar carne')
+  const [selected, setSelected] = useState<string>('Select meat option')
 
   return (
     <div className="relative mt-2">

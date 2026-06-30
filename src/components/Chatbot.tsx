@@ -14,10 +14,10 @@ interface ChatbotProps {
 const SYSTEM_PROMPT = `You are OMG Bot, the friendly AI assistant for OMG Cocina, a family-owned Mexican restaurant at 1500 7th St #1F, Sacramento, CA 95814. Phone: (916) 553-7072. Hours: Mon 9am-7pm, Tue-Thu 9am-8pm, Fri 9am-7pm, Sat 10am-3pm, Sun closed. You help customers with menu questions, hours, location, and reservations. You speak in a warm, friendly tone and can respond in English or Spanish. Keep answers concise and helpful. Always encourage customers to visit or order on Uber Eats.`
 
 const QUICK_PROMPTS = [
-  '¿Cuál es el horario?',
-  '¿Tienen opciones vegetarianas?',
-  '¿Dónde están ubicados?',
-  '¿Cómo puedo ordenar?',
+  'What are the hours?',
+  'Are there vegetarian options?',
+  'Where are you located?',
+  'How can I order?',
 ]
 
 export default function Chatbot({ externalOpen, onExternalClose }: ChatbotProps) {
@@ -25,7 +25,7 @@ export default function Chatbot({ externalOpen, onExternalClose }: ChatbotProps)
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: '¡Hola! Soy OMG Bot 🌸 ¿En qué te puedo ayudar hoy? Puedo responder preguntas sobre el menú, horarios, ubicación y más. ¡Pregúntame en español o inglés!',
+      content: 'Hello! I am OMG Bot 🌸 How can I help you today? I can answer questions about our menu, hours, location, and more. Feel free to ask me in English or Spanish!',
     },
   ])
   const [input, setInput] = useState('')
@@ -91,7 +91,7 @@ export default function Chatbot({ externalOpen, onExternalClose }: ChatbotProps)
       }
 
       const data = await response.json()
-      const botReply = data.content?.[0]?.text || 'Lo siento, no pude responder. Por favor llámanos al (916) 553-7072.'
+      const botReply = data.content?.[0]?.text || 'Sorry, I couldn\'t respond. Please call us at (916) 553-7072.'
 
       setMessages(prev => [...prev, { role: 'assistant', content: botReply }])
     } catch (err) {
@@ -100,7 +100,7 @@ export default function Chatbot({ externalOpen, onExternalClose }: ChatbotProps)
         ...prev,
         {
           role: 'assistant',
-          content: '¡Ups! Hubo un problema con la conexión. Puedes llamarnos directamente al (916) 553-7072 o visitarnos en 1500 7th St #1F, Sacramento. 🌸',
+          content: 'Oops! There was a connection issue. You can call us directly at (916) 553-7072 or visit us at 1500 7th St #1F, Sacramento. 🌸',
         },
       ])
     } finally {
@@ -122,7 +122,7 @@ export default function Chatbot({ externalOpen, onExternalClose }: ChatbotProps)
         id="chatbot-toggle"
         className="chat-bubble"
         onClick={() => open ? handleClose() : setOpen(true)}
-        aria-label={open ? 'Cerrar chat' : 'Abrir chat con OMG Bot'}
+        aria-label={open ? 'Close chat' : 'Open chat with OMG Bot'}
         aria-expanded={open}
       >
         {open ? (
@@ -164,11 +164,11 @@ export default function Chatbot({ externalOpen, onExternalClose }: ChatbotProps)
             </div>
             <div>
               <p className="font-bold text-sm text-white leading-tight">OMG Bot</p>
-              <p className="text-xs text-white/70">Asistente de OMG Cocina</p>
+              <p className="text-xs text-white/70">OMG Cocina Assistant</p>
             </div>
             <div className="ml-auto flex items-center gap-1.5">
               <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-xs text-white/70">En línea</span>
+              <span className="text-xs text-white/70">Online</span>
             </div>
           </div>
 
@@ -226,11 +226,11 @@ export default function Chatbot({ externalOpen, onExternalClose }: ChatbotProps)
               type="text"
               className="flex-1 bg-transparent text-sm outline-none"
               style={{ color: '#F5F5F5' }}
-              placeholder="Escribe tu pregunta..."
+              placeholder="Type your question..."
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              aria-label="Mensaje para OMG Bot"
+              aria-label="Message for OMG Bot"
             />
             <button
               id="chatbot-send"
@@ -243,7 +243,7 @@ export default function Chatbot({ externalOpen, onExternalClose }: ChatbotProps)
                   : 'rgba(212,175,55,0.15)',
                 cursor: input.trim() && !loading ? 'pointer' : 'not-allowed',
               }}
-              aria-label="Enviar mensaje"
+              aria-label="Send message"
             >
               <Send size={14} color={input.trim() && !loading ? '#0A0A0A' : '#555'} />
             </button>

@@ -3,7 +3,7 @@ import Reviews from '../components/Reviews'
 
 export default function ReviewsPage() {
   return (
-    <PageLayout title="Reseñas" emoji="⭐">
+    <PageLayout title="Reviews" emoji="⭐">
       <Reviews />
     </PageLayout>
   )
