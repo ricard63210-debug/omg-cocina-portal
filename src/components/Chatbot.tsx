@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { X, Send } from 'lucide-react'
+import botAvatar from '../assets/bot-avatar.png'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -64,18 +65,14 @@ export default function Chatbot({ externalOpen, onExternalClose }: ChatbotProps)
     setLoading(true)
 
     try {
-      const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY as string
-
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
+      // Fetch via serverless proxy to bypass browser CORS block and secure the key
+      const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-allow-browser': 'true',
         },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-5',
+          model: 'claude-3-5-sonnet-20241022',
           max_tokens: 512,
           system: SYSTEM_PROMPT,
           messages: [
@@ -121,6 +118,7 @@ export default function Chatbot({ externalOpen, onExternalClose }: ChatbotProps)
       <button
         id="chatbot-toggle"
         className="chat-bubble"
+        style={{ overflow: 'hidden', padding: 0 }}
         onClick={() => open ? handleClose() : setOpen(true)}
         aria-label={open ? 'Close chat' : 'Open chat with OMG Bot'}
         aria-expanded={open}
@@ -128,7 +126,7 @@ export default function Chatbot({ externalOpen, onExternalClose }: ChatbotProps)
         {open ? (
           <X size={24} color="white" />
         ) : (
-          <span className="text-2xl">🌸</span>
+          <img src={botAvatar} alt="OMG Bot Chef" className="w-full h-full object-cover" />
         )}
       </button>
 
@@ -156,12 +154,7 @@ export default function Chatbot({ externalOpen, onExternalClose }: ChatbotProps)
               borderBottom: '1px solid rgba(255,255,255,0.1)',
             }}
           >
-            <div
-              className="w-9 h-9 rounded-full flex items-center justify-center text-lg shrink-0"
-              style={{ background: 'rgba(0,0,0,0.2)' }}
-            >
-              🌸
-            </div>
+            <img src={botAvatar} alt="OMG Bot Chef" className="w-9 h-9 rounded-full object-cover border border-white/20 shrink-0" />
             <div>
               <p className="font-bold text-sm text-white leading-tight">OMG Bot</p>
               <p className="text-xs text-white/70">OMG Cocina Assistant</p>

@@ -342,6 +342,7 @@ export default function Home({ onOpenChat }: HomeProps) {
             }}
           >
             <UberEatsLogo />
+            <span className="font-bold tracking-wide">Order Online</span>
           </a>
         </div>
       </section>
