@@ -10,6 +10,9 @@ export interface MenuItem {
   meatChoice?: boolean // shows meat badge selector
   addons?: string[]
   image?: string       // absolute or relative URL to the dish image
+  ingredients?: string[] // list of ingredients
+  spicy?: boolean
+  glutenFree?: boolean
 }
 
 export interface MenuCategory {
@@ -75,18 +78,27 @@ export const MENU_CATEGORIES: MenuCategory[] = [
         price: '$18.00',
         description: 'Grilled chicken breast, romaine, tomato, avocado, grilled corn, and cucumber',
         image: '/dishes/chicken_salad.jpg',
+        ingredients: ['Grilled chicken breast', 'Romaine lettuce', 'Tomatoes', 'Avocado slice', 'Grilled sweet corn', 'Fresh cucumber', 'House dressing'],
+        glutenFree: true,
+        spicy: false,
       },
       {
         name: 'Arrachera Salad',
         price: '$19.50',
         description: 'Steak, romaine, tomato, avocado, grilled corn, and cucumber',
         image: '/dishes/arrachera_salad.jpg',
+        ingredients: ['Grilled arrachera steak', 'Romaine lettuce', 'Tomatoes', 'Avocado slice', 'Grilled sweet corn', 'Fresh cucumber', 'House dressing'],
+        glutenFree: true,
+        spicy: false,
       },
       {
         name: 'Shrimp Salad',
         price: '$19.50',
         description: 'Grilled shrimp, romaine, tomato, avocado, grilled corn, and cucumber',
         image: '/dishes/shrimp_salad.jpg',
+        ingredients: ['Seasoned grilled shrimp', 'Romaine lettuce', 'Tomatoes', 'Avocado slice', 'Grilled sweet corn', 'Fresh cucumber', 'House dressing'],
+        glutenFree: true,
+        spicy: false,
       },
       {
         name: 'Salmon Salad',
@@ -111,12 +123,18 @@ export const MENU_CATEGORIES: MenuCategory[] = [
         price: '$5.00',
         description: 'Breaded shrimp, chipotle aioli, mango mayo habanero, pico de mango, cheese, cabbage slaw on corn tortilla',
         image: '/dishes/shrimp_taco.jpg',
+        ingredients: ['Crispy breaded shrimp', 'Tomatillo salsa', 'Chipotle aioli', 'Mango-habanero mayo', 'Pico de mango', 'Melted cheese', 'Shredded cabbage', 'Warm corn tortilla'],
+        glutenFree: false,
+        spicy: true,
       },
       {
         name: 'Fish Taco',
         price: '$5.00',
         description: 'Breaded fish, chipotle aioli, mango mayo habanero, pico de mango, cabbage slaw on corn tortilla',
         image: '/dishes/fish_taco.jpg',
+        ingredients: ['Crispy breaded fish fillet', 'Tomatillo salsa', 'Chipotle aioli', 'Mango-habanero mayo', 'Pico de mango', 'Shredded cabbage', 'Warm corn tortilla'],
+        glutenFree: false,
+        spicy: true,
       },
     ],
   },
@@ -143,6 +161,9 @@ export const MENU_CATEGORIES: MenuCategory[] = [
         description: 'Housemade tortilla chips, refried beans, choice of meat, melted cheese, guacamole, pico de gallo, sour cream, and jalapeños',
         meatChoice: true,
         image: '/dishes/super_nachos.jpg',
+        ingredients: ['Crispy housemade tortilla chips', 'Warm refried beans', 'Choice of meat (Carne Asada, Chicken, etc.)', 'Melted Monterey Jack cheese', 'Fresh guacamole', 'Pico de gallo', 'Mexican sour cream', 'Pickled jalapeños'],
+        glutenFree: true,
+        spicy: true,
       },
       {
         name: '*Ceviche',
@@ -170,6 +191,9 @@ export const MENU_CATEGORIES: MenuCategory[] = [
         note: '⏱ Takes 15–20 min to make',
         meatChoice: true,
         image: '/dishes/omg_taco_plate.jpg',
+        ingredients: ['Two tacos with choice of meat', 'Melted cheese', 'Pico de mango', 'Pickled red onions', 'Mexican red rice'],
+        glutenFree: true,
+        spicy: false,
       },
       {
         name: 'Chile Relleno Plate',
@@ -182,6 +206,9 @@ export const MENU_CATEGORIES: MenuCategory[] = [
         description: 'Choice of meat, rice, beans, sour cream, shredded cheese, served with lettuce, pico de gallo, guacamole and charred tomato salsa',
         meatChoice: true,
         image: '/dishes/burrito.jpg',
+        ingredients: ['Choice of meat', 'Mexican red rice', 'Refried beans', 'Sour cream', 'Shredded cheese blend', 'Lettuce', 'Pico de gallo', 'Fresh guacamole', 'Charred tomato salsa', 'Large flour tortilla'],
+        glutenFree: false,
+        spicy: false,
       },
       {
         name: 'Shrimp Burrito',
@@ -194,6 +221,9 @@ export const MENU_CATEGORIES: MenuCategory[] = [
         description: 'Three chicken and cheese enchiladas in red guajillo, mole, & green tomatillo sauce, cabbage, pickled onions, topped with cheese, avocado, and sour cream. Served with side of rice',
         note: '⚠️ Mole contains nuts/peanuts',
         image: '/dishes/enchilada_plate.jpg',
+        ingredients: ['Three corn tortillas stuffed with chicken and cheese', 'Red guajillo pepper sauce', 'Rich mole negro sauce', 'Green tomatillo salsa', 'Shredded cabbage', 'Pickled red onions', 'Melted cheese', 'Avocado slice', 'Mexican sour cream', 'Side of rice'],
+        glutenFree: false,
+        spicy: true,
       },
       {
         name: 'Quesadilla Plate',
@@ -201,6 +231,9 @@ export const MENU_CATEGORIES: MenuCategory[] = [
         description: 'Flour tortilla filled with cheese and choice of meat, served with lettuce, sour cream, guacamole, charred tomato salsa, and a side of rice',
         meatChoice: true,
         image: '/dishes/quesadilla_plate.jpg',
+        ingredients: ['Folded flour tortilla with melted cheese', 'Choice of meat', 'Shredded lettuce', 'Sour cream', 'Fresh guacamole', 'Charred tomato salsa', 'Side of rice'],
+        glutenFree: false,
+        spicy: false,
       },
       {
         name: 'Shrimp Quesadilla Plate',
@@ -217,12 +250,18 @@ export const MENU_CATEGORIES: MenuCategory[] = [
         price: '$24.00',
         description: 'Citrus braised tender pulled pork with crispy exterior served over a bed of peppers and onions alongside pickled jalapeños, rice, beans, lettuce, pico de gallo, and choice of tortillas',
         image: '/dishes/carnita_plate.jpg',
+        ingredients: ['Slow-cooked citrus-marinated pulled pork (carnitas)', 'Grilled bell peppers & onions', 'Pickled jalapeños', 'Mexican red rice', 'Refried beans', 'Shredded lettuce', 'Pico de gallo', 'Choice of warm corn or flour tortillas'],
+        glutenFree: true,
+        spicy: true,
       },
       {
         name: 'Salmon Caribeño',
         price: '$23.00',
         description: 'Served over a bed of mixed veggies. Salmon topped with tamarind sauce, chipotle aioli sauce, mango mayo habanero, and pico de mango. Served with a side salad',
         image: '/dishes/salmon_caribeno.jpg',
+        ingredients: ['Pan-seared salmon fillet', 'Rich tamarindo glaze', 'Chipotle aioli sauce', 'Mango-habanero mayo', 'Pico de mango', 'Assorted mixed grilled vegetables', 'Fresh side salad'],
+        glutenFree: true,
+        spicy: true,
       },
     ],
   },
@@ -236,18 +275,27 @@ export const MENU_CATEGORIES: MenuCategory[] = [
         price: '$30.00',
         description: 'Served with rice, beans, lettuce, pico de gallo, sour cream and choice of tortillas',
         image: '/dishes/mix_fajita.jpg',
+        ingredients: ['Grilled chicken breast slices', 'Tender steak slices', 'Sautéed bell peppers and sweet onions', 'Mexican red rice', 'Refried beans', 'Shredded lettuce', 'Pico de gallo', 'Sour cream', 'Choice of warm tortillas'],
+        glutenFree: true,
+        spicy: false,
       },
       {
         name: 'Shrimp Fajita',
         price: '$22.00',
         description: 'Served with rice, beans, lettuce, pico de gallo, sour cream and choice of tortillas',
         image: '/dishes/shrimp_fajita.jpg',
+        ingredients: ['Succulent grilled shrimp', 'Sautéed bell peppers and sweet onions', 'Mexican red rice', 'Refried beans', 'Shredded lettuce', 'Pico de gallo', 'Sour cream', 'Choice of warm tortillas'],
+        glutenFree: true,
+        spicy: false,
       },
       {
         name: 'Chicken Fajita',
         price: '$18.00',
         description: 'Served with rice, beans, lettuce, pico de gallo, sour cream and choice of tortillas',
         image: '/dishes/chicken_fajita.jpg',
+        ingredients: ['Marinated grilled chicken breast slices', 'Sautéed bell peppers and sweet onions', 'Mexican red rice', 'Refried beans', 'Shredded lettuce', 'Pico de gallo', 'Sour cream', 'Choice of warm tortillas'],
+        glutenFree: true,
+        spicy: false,
       },
       {
         name: 'Veggie Fajita',
