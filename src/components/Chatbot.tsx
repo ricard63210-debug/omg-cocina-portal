@@ -6,6 +6,11 @@ interface Message {
   content: string
 }
 
+interface ChatbotProps {
+  externalOpen?: boolean
+  onExternalClose?: () => void
+}
+
 const SYSTEM_PROMPT = `You are OMG Bot, the friendly AI assistant for OMG Cocina, a family-owned Mexican restaurant at 1500 7th St #1F, Sacramento, CA 95814. Phone: (916) 553-7072. Hours: Mon 9am-7pm, Tue-Thu 9am-8pm, Fri 9am-7pm, Sat 10am-3pm, Sun closed. You help customers with menu questions, hours, location, and reservations. You speak in a warm, friendly tone and can respond in English or Spanish. Keep answers concise and helpful. Always encourage customers to visit or order on Uber Eats.`
 
 const QUICK_PROMPTS = [
@@ -15,7 +20,7 @@ const QUICK_PROMPTS = [
   '¿Cómo puedo ordenar?',
 ]
 
-export default function Chatbot() {
+export default function Chatbot({ externalOpen, onExternalClose }: ChatbotProps) {
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -27,6 +32,18 @@ export default function Chatbot() {
   const [loading, setLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  // Sync external open state (triggered from Home nav tile)
+  useEffect(() => {
+    if (externalOpen) {
+      setOpen(true)
+    }
+  }, [externalOpen])
+
+  const handleClose = () => {
+    setOpen(false)
+    onExternalClose?.()
+  }
 
   useEffect(() => {
     if (open) {
@@ -104,7 +121,7 @@ export default function Chatbot() {
       <button
         id="chatbot-toggle"
         className="chat-bubble"
-        onClick={() => setOpen(o => !o)}
+        onClick={() => open ? handleClose() : setOpen(true)}
         aria-label={open ? 'Cerrar chat' : 'Abrir chat con OMG Bot'}
         aria-expanded={open}
       >
