@@ -101,7 +101,7 @@ export default function Chatbot({ externalOpen, onExternalClose }: ChatbotProps)
       console.error('Chat error:', err)
       const errorText = err.message === 'API_KEY_MISSING'
         ? 'Oops! The Anthropic API Key is not configured on Vercel yet. Please add ANTHROPIC_API_KEY in your Vercel project settings dashboard. 🌸'
-        : 'Oops! There was a connection issue. You can call us directly at (916) 553-7072 or visit us at 1500 7th St #1F, Sacramento. 🌸'
+        : `Oops! There was a connection issue. Details: ${err.message || 'Unknown error'}. 🌸`
       setMessages(prev => [
         ...prev,
         {
