@@ -27,14 +27,6 @@ function ColoredGoogleIcon() {
   )
 }
 
-function UberEatsLogo() {
-  return (
-    <svg viewBox="0 0 74 12" width="76" height="13" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="inline-block shrink-0">
-      <path d="M6.3 8.3V.2h1.6v8.1c0 1.2-.6 1.8-1.7 1.8H.2V8.3h6.1zM14.9 8.2c0 1.2-.8 2-2.2 2H9.3V.2h1.6v8h1.8c.4 0 .6-.2.6-.6V.2h1.6v8zM21.9 4.3h-3.4v2.5h3.4v1.5h-5V.2h5v1.5h-3.4v1.1h3.4v1.5zM27.2.2c1.4 0 2.2.7 2.2 1.8 0 .8-.5 1.3-1.2 1.5.8.2 1.3.8 1.3 1.7v3.1h-1.6V5.2c0-.5-.3-.7-.9-.7h-1.4v3.8h-1.6V.2h3.2zm-1.6 3.1h1.5c.5 0 .7-.2.7-.6s-.2-.6-.7-.6h-1.5v1.2z" fill="#FFFFFF" />
-      <path d="M37.5 4.3h-3.4v2.5h3.4v1.5h-5V.2h5v1.5h-3.4v1.1h3.4v1.5zM43.9 6.2H40l-.7 2.1H37.6L41.1.2h1.7l3.5 8.1H44.6l-.7-2.1zm-3.4-1.3h2.9L42 1.6l-1.5 3.3zM49.6 1.7v6.6h-1.6V1.7h-2.1V.2h5.8v1.5h-2.1zM55.8 5.7c.3.3.7.4 1.2.4.5 0 .8-.2.8-.5 0-.8-2.6-.5-2.6-2.5 0-1.1.9-2 2.3-2 1.1 0 1.9.4 2.3.9L58.6 3c-.3-.3-.7-.4-1.1-.4-.4 0-.7.1-.7.4 0 .7 2.6.4 2.6 2.5 0 1.1-.9 2.1-2.4 2.1-1.2 0-2.2-.4-2.7-1l1.5-1.3z" fill="#06C167" />
-    </svg>
-  )
-}
 
 const NAV_TILES: NavTile[] = [
   {
@@ -326,22 +318,9 @@ export default function Home({ onOpenChat }: HomeProps) {
             href="https://www.ubereats.com/store/omg-cocina-mexican-restaurant/SR-uZ74BQ7qPa6TXCnftEQ"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full text-white font-semibold text-sm py-4 flex items-center justify-center gap-3 transition-all"
-            style={{
-              background: '#06C167',
-              borderRadius: '50px',
-              boxShadow: '0 4px 15px rgba(6, 193, 103, 0.25)',
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.transform = 'translateY(-2px)'
-              e.currentTarget.style.boxShadow = '0 8px 25px rgba(6, 193, 103, 0.4)'
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.transform = 'translateY(0)'
-              e.currentTarget.style.boxShadow = '0 4px 15px rgba(6, 193, 103, 0.25)'
-            }}
+            className="btn-pink w-full justify-center text-sm py-4 flex items-center gap-2"
+            style={{ borderRadius: '50px' }}
           >
-            <UberEatsLogo />
             <span className="font-bold tracking-wide">Order Online</span>
           </a>
         </div>
