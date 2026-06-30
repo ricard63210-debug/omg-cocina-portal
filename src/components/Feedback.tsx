@@ -8,6 +8,7 @@ const CATEGORIES: Category[] = ['Food', 'Service', 'Atmosphere', 'Other']
 
 interface FormState {
   name: string
+  phone: string
   rating: number
   category: Category | ''
   serverInfo: string
@@ -22,6 +23,7 @@ type SubmitStatus = 'idle' | 'loading' | 'success' | 'error'
 export default function Feedback() {
   const [form, setForm] = useState<FormState>({
     name: '',
+    phone: '',
     rating: 0,
     category: '',
     serverInfo: '',
@@ -52,6 +54,7 @@ export default function Feedback() {
 [Feedback Detail Summary]
 - Rating: ${form.rating} Stars
 - Category: ${form.category || 'N/A'}
+- Phone Number: ${form.phone.trim() || 'N/A'}
 - Server Name/Number: ${form.serverInfo.trim() || 'N/A'}
 - Table Number: ${form.tableNumber.trim() || 'N/A'}
 - Date of Visit: ${form.visitDate || 'N/A'}
@@ -114,6 +117,7 @@ ${form.message.trim()}
                 onClick={() => {
                   setForm({
                     name: '',
+                    phone: '',
                     rating: 0,
                     category: '',
                     serverInfo: '',
@@ -146,6 +150,25 @@ ${form.message.trim()}
                   placeholder="Your name..."
                   value={form.name}
                   onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                />
+              </div>
+
+              {/* Phone Number */}
+              <div>
+                <label
+                  htmlFor="feedback-phone"
+                  className="block text-xs font-semibold mb-1.5 uppercase tracking-wider"
+                  style={{ color: 'rgba(245,245,245,0.6)' }}
+                >
+                  Phone Number <span style={{ color: 'rgba(245,245,245,0.3)' }}>(optional, for follow-up)</span>
+                </label>
+                <input
+                  id="feedback-phone"
+                  type="tel"
+                  className="form-input"
+                  placeholder="Your phone number..."
+                  value={form.phone}
+                  onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
                 />
               </div>
 
