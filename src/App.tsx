@@ -8,6 +8,7 @@ import ReviewsPage from './pages/ReviewsPage'
 import EventosPage from './pages/EventosPage'
 import FeedbackPage from './pages/FeedbackPage'
 import ContactPage from './pages/ContactPage'
+import AdminPage from './pages/AdminPage'
 
 // Global components
 import Chatbot from './components/Chatbot'
@@ -24,6 +25,7 @@ function App() {
         <Route path="/eventos" element={<EventosPage />} />
         <Route path="/feedback" element={<FeedbackPage />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/admin" element={<AdminPage />} />
         {/* Catch-all → home */}
         <Route path="*" element={<Home onOpenChat={() => setChatOpen(true)} />} />
       </Routes>
