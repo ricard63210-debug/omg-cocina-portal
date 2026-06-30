@@ -59,6 +59,18 @@ export default function Menu() {
           >
             {activeCategory.items.map((item, idx) => (
               <div key={idx} className="menu-item-card">
+                {/* Image */}
+                {item.image && (
+                  <div className="w-full h-44 overflow-hidden rounded-lg mb-3">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
+
                 {/* Header row */}
                 <div className="flex items-start justify-between gap-2 mb-1.5">
                   <h3

@@ -9,6 +9,7 @@ export interface MenuItem {
   note?: string        // allergy/prep notes
   meatChoice?: boolean // shows meat badge selector
   addons?: string[]
+  image?: string       // absolute or relative URL to the dish image
 }
 
 export interface MenuCategory {
@@ -73,16 +74,19 @@ export const MENU_CATEGORIES: MenuCategory[] = [
         name: 'Chicken Salad',
         price: '$18.00',
         description: 'Grilled chicken breast, romaine, tomato, avocado, grilled corn, and cucumber',
+        image: '/dishes/chicken_salad.jpg',
       },
       {
         name: 'Arrachera Salad',
         price: '$19.50',
         description: 'Steak, romaine, tomato, avocado, grilled corn, and cucumber',
+        image: '/dishes/arrachera_salad.jpg',
       },
       {
         name: 'Shrimp Salad',
         price: '$19.50',
         description: 'Grilled shrimp, romaine, tomato, avocado, grilled corn, and cucumber',
+        image: '/dishes/shrimp_salad.jpg',
       },
       {
         name: 'Salmon Salad',
@@ -106,11 +110,13 @@ export const MENU_CATEGORIES: MenuCategory[] = [
         name: 'Shrimp Taco',
         price: '$5.00',
         description: 'Breaded shrimp, chipotle aioli, mango mayo habanero, pico de mango, cheese, cabbage slaw on corn tortilla',
+        image: '/dishes/shrimp_taco.jpg',
       },
       {
         name: 'Fish Taco',
         price: '$5.00',
         description: 'Breaded fish, chipotle aioli, mango mayo habanero, pico de mango, cabbage slaw on corn tortilla',
+        image: '/dishes/fish_taco.jpg',
       },
     ],
   },

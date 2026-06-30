@@ -65,8 +65,11 @@ export default function Chatbot({ externalOpen, onExternalClose }: ChatbotProps)
     setLoading(true)
 
     try {
+      const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      const apiEndpoint = isLocal ? 'https://omg-cocina.vercel.app/api/chat' : '/api/chat'
+
       // Fetch via serverless proxy to bypass browser CORS block and secure the key
-      const response = await fetch('/api/chat', {
+      const response = await fetch(apiEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -84,20 +87,26 @@ export default function Chatbot({ externalOpen, onExternalClose }: ChatbotProps)
 
       if (!response.ok) {
         const err = await response.json().catch(() => ({}))
-        throw new Error(err.error?.message || `HTTP ${response.status}`)
+        if (err.error === 'Chat API configuration error') {
+          throw new Error('API_KEY_MISSING')
+        }
+        throw new Error(err.error?.message || err.error || `HTTP ${response.status}`)
       }
 
       const data = await response.json()
       const botReply = data.content?.[0]?.text || 'Sorry, I couldn\'t respond. Please call us at (916) 553-7072.'
 
       setMessages(prev => [...prev, { role: 'assistant', content: botReply }])
-    } catch (err) {
+    } catch (err: any) {
       console.error('Chat error:', err)
+      const errorText = err.message === 'API_KEY_MISSING'
+        ? 'Oops! The Anthropic API Key is not configured on Vercel yet. Please add ANTHROPIC_API_KEY in your Vercel project settings dashboard. 🌸'
+        : 'Oops! There was a connection issue. You can call us directly at (916) 553-7072 or visit us at 1500 7th St #1F, Sacramento. 🌸'
       setMessages(prev => [
         ...prev,
         {
           role: 'assistant',
-          content: 'Oops! There was a connection issue. You can call us directly at (916) 553-7072 or visit us at 1500 7th St #1F, Sacramento. 🌸',
+          content: errorText,
         },
       ])
     } finally {

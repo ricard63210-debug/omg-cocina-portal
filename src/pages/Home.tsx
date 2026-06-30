@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import HoursBar from '../components/HoursBar'
 import { RoseWatermark } from '../components/RoseDecor'
-import { MapPin } from 'lucide-react'
+import { MapPin, Share2 } from 'lucide-react'
 import logo from '../assets/logo.png'
 
 interface NavTile {
@@ -102,6 +102,28 @@ interface HomeProps {
 export default function Home({ onOpenChat }: HomeProps) {
   const navigate = useNavigate()
 
+  const handleShare = async () => {
+    const url = window.location.origin
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'OMG Cocina',
+          text: 'Check out OMG Cocina - Fresh Mexican Flavors in Sacramento, CA!',
+          url: url,
+        })
+      } catch (err) {
+        console.log('Share dismissed:', err)
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(url)
+        alert('Link copied to clipboard!')
+      } catch (err) {
+        console.log('Copy failed:', err)
+      }
+    }
+  }
+
   const handleTileClick = (tile: NavTile) => {
     if (tile.action === 'chatbot') {
       onOpenChat()
@@ -125,6 +147,21 @@ export default function Home({ onOpenChat }: HomeProps) {
           padding: '3.5rem 1.5rem 2rem',
         }}
       >
+        {/* Floating Share Button on Home page */}
+        <button
+          onClick={handleShare}
+          className="absolute top-4 right-4 z-20 flex items-center justify-center p-2.5 rounded-full transition-all hover:scale-105"
+          style={{
+            color: '#D4AF37',
+            background: 'rgba(212,175,55,0.12)',
+            border: '1px solid rgba(212,175,55,0.3)',
+            boxShadow: '0 4px 15px rgba(0,0,0,0.4)',
+          }}
+          aria-label="Share portal"
+        >
+          <Share2 size={16} />
+        </button>
+
         {/* Ambient glows */}
         <div className="hero-glow-1" />
         <div className="hero-glow-2" />
