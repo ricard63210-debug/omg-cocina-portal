@@ -10,6 +10,10 @@ interface FormState {
   name: string
   rating: number
   category: Category | ''
+  serverInfo: string
+  tableNumber: string
+  visitDate: string
+  visitTime: string
   message: string
 }
 
@@ -20,6 +24,10 @@ export default function Feedback() {
     name: '',
     rating: 0,
     category: '',
+    serverInfo: '',
+    tableNumber: '',
+    visitDate: '',
+    visitTime: '',
     message: '',
   })
   const [hoverRating, setHoverRating] = useState(0)
@@ -39,12 +47,26 @@ export default function Feedback() {
     setErrorMsg('')
     setStatus('loading')
 
+    // Create a structured message containing all tracking details for complaints/follow-ups
+    const structuredMessage = `
+[Feedback Detail Summary]
+- Rating: ${form.rating} Stars
+- Category: ${form.category || 'N/A'}
+- Server Name/Number: ${form.serverInfo.trim() || 'N/A'}
+- Table Number: ${form.tableNumber.trim() || 'N/A'}
+- Date of Visit: ${form.visitDate || 'N/A'}
+- Time of Visit: ${form.visitTime || 'N/A'}
+
+[Comments]:
+${form.message.trim()}
+`.trim()
+
     try {
       const { error } = await supabase.from('omg_feedback').insert({
         name: form.name.trim() || null,
         rating: form.rating,
         category: form.category || null,
-        message: form.message.trim(),
+        message: structuredMessage,
       })
 
       if (error) throw error
@@ -63,7 +85,7 @@ export default function Feedback() {
         background: 'linear-gradient(180deg, #0A0A0A 0%, rgba(233,30,140,0.03) 50%, #0A0A0A 100%)',
       }}
     >
-      <div className="section-wrapper">
+      <div className="section-wrapper animate-fade-in">
         <SectionDivider title="Your Feedback Matters 💬" />
 
         <div
@@ -90,7 +112,16 @@ export default function Feedback() {
               <button
                 className="btn-pink mt-6"
                 onClick={() => {
-                  setForm({ name: '', rating: 0, category: '', message: '' })
+                  setForm({
+                    name: '',
+                    rating: 0,
+                    category: '',
+                    serverInfo: '',
+                    tableNumber: '',
+                    visitDate: '',
+                    visitTime: '',
+                    message: '',
+                  })
                   setStatus('idle')
                 }}
               >
@@ -172,6 +203,81 @@ export default function Feedback() {
                 </select>
               </div>
 
+              {/* Restructured Follow-up Details Grid */}
+              <div className="border-t border-b border-black-border py-4 my-2 space-y-4">
+                <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#D4AF37' }}>
+                  📋 Visit Details (For Follow-Up)
+                </p>
+                
+                <div className="grid grid-cols-2 gap-3.5">
+                  <div>
+                    <label
+                      htmlFor="feedback-server"
+                      className="block text-xxs font-semibold mb-1.5 uppercase tracking-wider text-white/50"
+                    >
+                      Server Name / #
+                    </label>
+                    <input
+                      id="feedback-server"
+                      type="text"
+                      className="form-input text-sm"
+                      placeholder="e.g. Maria / 12"
+                      value={form.serverInfo}
+                      onChange={e => setForm(f => ({ ...f, serverInfo: e.target.value }))}
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="feedback-table"
+                      className="block text-xxs font-semibold mb-1.5 uppercase tracking-wider text-white/50"
+                    >
+                      Table Number
+                    </label>
+                    <input
+                      id="feedback-table"
+                      type="text"
+                      className="form-input text-sm"
+                      placeholder="e.g. 5"
+                      value={form.tableNumber}
+                      onChange={e => setForm(f => ({ ...f, tableNumber: e.target.value }))}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3.5">
+                  <div>
+                    <label
+                      htmlFor="feedback-date"
+                      className="block text-xxs font-semibold mb-1.5 uppercase tracking-wider text-white/50"
+                    >
+                      Date of Visit
+                    </label>
+                    <input
+                      id="feedback-date"
+                      type="date"
+                      className="form-input text-sm"
+                      value={form.visitDate}
+                      onChange={e => setForm(f => ({ ...f, visitDate: e.target.value }))}
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="feedback-time"
+                      className="block text-xxs font-semibold mb-1.5 uppercase tracking-wider text-white/50"
+                    >
+                      Time of Visit
+                    </label>
+                    <input
+                      id="feedback-time"
+                      type="time"
+                      className="form-input text-sm"
+                      value={form.visitTime}
+                      onChange={e => setForm(f => ({ ...f, visitTime: e.target.value }))}
+                    />
+                  </div>
+                </div>
+              </div>
+
               {/* Message */}
               <div>
                 <label
@@ -179,13 +285,13 @@ export default function Feedback() {
                   className="block text-xs font-semibold mb-1.5 uppercase tracking-wider"
                   style={{ color: 'rgba(245,245,245,0.6)' }}
                 >
-                  Message <span style={{ color: '#E91E8C' }}>*</span>
+                  Message / Comments <span style={{ color: '#E91E8C' }}>*</span>
                 </label>
                 <textarea
                   id="feedback-message"
                   className="form-input resize-none"
                   rows={4}
-                  placeholder="Tell us about your experience..."
+                  placeholder="Share details of your experience to help us improve..."
                   value={form.message}
                   onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
                 />
@@ -207,7 +313,8 @@ export default function Feedback() {
                 id="feedback-submit"
                 type="submit"
                 disabled={status === 'loading'}
-                className="btn-pink w-full justify-center"
+                className="btn-pink w-full justify-center py-3.5 text-base"
+                style={{ borderRadius: '50px' }}
               >
                 {status === 'loading' ? (
                   <span className="flex items-center gap-2">

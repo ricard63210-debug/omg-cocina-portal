@@ -16,6 +16,26 @@ interface NavTile {
   border: string
 }
 
+function ColoredGoogleIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="28" height="28" xmlns="http://www.w3.org/2000/svg" className="shrink-0 mb-1">
+      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05" />
+      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+    </svg>
+  )
+}
+
+function UberEatsLogo() {
+  return (
+    <svg viewBox="0 0 74 12" width="76" height="13" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="inline-block shrink-0">
+      <path d="M6.3 8.3V.2h1.6v8.1c0 1.2-.6 1.8-1.7 1.8H.2V8.3h6.1zM14.9 8.2c0 1.2-.8 2-2.2 2H9.3V.2h1.6v8h1.8c.4 0 .6-.2.6-.6V.2h1.6v8zM21.9 4.3h-3.4v2.5h3.4v1.5h-5V.2h5v1.5h-3.4v1.1h3.4v1.5zM27.2.2c1.4 0 2.2.7 2.2 1.8 0 .8-.5 1.3-1.2 1.5.8.2 1.3.8 1.3 1.7v3.1h-1.6V5.2c0-.5-.3-.7-.9-.7h-1.4v3.8h-1.6V.2h3.2zm-1.6 3.1h1.5c.5 0 .7-.2.7-.6s-.2-.6-.7-.6h-1.5v1.2z" fill="#FFFFFF" />
+      <path d="M37.5 4.3h-3.4v2.5h3.4v1.5h-5V.2h5v1.5h-3.4v1.1h3.4v1.5zM43.9 6.2H40l-.7 2.1H37.6L41.1.2h1.7l3.5 8.1H44.6l-.7-2.1zm-3.4-1.3h2.9L42 1.6l-1.5 3.3zM49.6 1.7v6.6h-1.6V1.7h-2.1V.2h5.8v1.5h-2.1zM55.8 5.7c.3.3.7.4 1.2.4.5 0 .8-.2.8-.5 0-.8-2.6-.5-2.6-2.5 0-1.1.9-2 2.3-2 1.1 0 1.9.4 2.3.9L58.6 3c-.3-.3-.7-.4-1.1-.4-.4 0-.7.1-.7.4 0 .7 2.6.4 2.6 2.5 0 1.1-.9 2.1-2.4 2.1-1.2 0-2.2-.4-2.7-1l1.5-1.3z" fill="#06C167" />
+    </svg>
+  )
+}
+
 const NAV_TILES: NavTile[] = [
   {
     id: 'menu',
@@ -28,7 +48,7 @@ const NAV_TILES: NavTile[] = [
   },
   {
     id: 'reviews',
-    emoji: '⭐',
+    icon: <ColoredGoogleIcon />,
     label: 'Reviews',
     sublabel: 'What our customers say',
     to: '/reviews',
@@ -43,15 +63,6 @@ const NAV_TILES: NavTile[] = [
     to: '/eventos',
     gradient: 'linear-gradient(135deg, rgba(233,30,140,0.18) 0%, rgba(212,175,55,0.06) 100%)',
     border: 'rgba(233,30,140,0.25)',
-  },
-  {
-    id: 'feedback',
-    emoji: '💬',
-    label: 'Feedback',
-    sublabel: 'We value your opinion',
-    to: '/feedback',
-    gradient: 'linear-gradient(135deg, rgba(212,175,55,0.15) 0%, rgba(233,30,140,0.08) 100%)',
-    border: 'rgba(212,175,55,0.25)',
   },
   {
     id: 'contact',
@@ -297,16 +308,42 @@ export default function Home({ onOpenChat }: HomeProps) {
           ))}
         </div>
 
-        {/* Uber Eats quick link */}
-        <a
-          href="https://www.ubereats.com/store/omg-cocina-mexican-restaurant/SR-uZ74BQ7qPa6TXCnftEQ"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-pink w-full justify-center mt-5 text-sm"
-          style={{ display: 'flex' }}
-        >
-          🛵 Order on Uber Eats
-        </a>
+        {/* CTA Buttons Block at the Bottom */}
+        <div className="flex flex-col gap-3.5 mt-6 w-full">
+          {/* Feedback button */}
+          <button
+            id="home-feedback-btn"
+            onClick={() => navigate('/feedback')}
+            className="btn-gold w-full justify-center text-sm py-4 flex items-center gap-2"
+            style={{ borderRadius: '50px' }}
+          >
+            💬 Leave Feedback / Report Issues
+          </button>
+
+          {/* Uber Eats button */}
+          <a
+            id="home-ubereats-btn"
+            href="https://www.ubereats.com/store/omg-cocina-mexican-restaurant/SR-uZ74BQ7qPa6TXCnftEQ"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full text-white font-semibold text-sm py-4 flex items-center justify-center gap-3 transition-all"
+            style={{
+              background: '#06C167',
+              borderRadius: '50px',
+              boxShadow: '0 4px 15px rgba(6, 193, 103, 0.25)',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.transform = 'translateY(-2px)'
+              e.currentTarget.style.boxShadow = '0 8px 25px rgba(6, 193, 103, 0.4)'
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.transform = 'translateY(0)'
+              e.currentTarget.style.boxShadow = '0 4px 15px rgba(6, 193, 103, 0.25)'
+            }}
+          >
+            <UberEatsLogo />
+          </a>
+        </div>
       </section>
 
       {/* Footer mini */}
