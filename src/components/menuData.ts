@@ -142,6 +142,7 @@ export const MENU_CATEGORIES: MenuCategory[] = [
         price: '$18.00',
         description: 'Housemade tortilla chips, refried beans, choice of meat, melted cheese, guacamole, pico de gallo, sour cream, and jalapeños',
         meatChoice: true,
+        image: '/dishes/super_nachos.jpg',
       },
       {
         name: '*Ceviche',
@@ -168,6 +169,7 @@ export const MENU_CATEGORIES: MenuCategory[] = [
         description: 'Two tacos, choice of one meat, cheese, pico de mango, pickled onions, with side of rice',
         note: '⏱ Takes 15–20 min to make',
         meatChoice: true,
+        image: '/dishes/omg_taco_plate.jpg',
       },
       {
         name: 'Chile Relleno Plate',
@@ -179,6 +181,7 @@ export const MENU_CATEGORIES: MenuCategory[] = [
         price: '$16.50',
         description: 'Choice of meat, rice, beans, sour cream, shredded cheese, served with lettuce, pico de gallo, guacamole and charred tomato salsa',
         meatChoice: true,
+        image: '/dishes/burrito.jpg',
       },
       {
         name: 'Shrimp Burrito',
@@ -190,12 +193,14 @@ export const MENU_CATEGORIES: MenuCategory[] = [
         price: '$18.00',
         description: 'Three chicken and cheese enchiladas in red guajillo, mole, & green tomatillo sauce, cabbage, pickled onions, topped with cheese, avocado, and sour cream. Served with side of rice',
         note: '⚠️ Mole contains nuts/peanuts',
+        image: '/dishes/enchilada_plate.jpg',
       },
       {
         name: 'Quesadilla Plate',
         price: '$17.00',
         description: 'Flour tortilla filled with cheese and choice of meat, served with lettuce, sour cream, guacamole, charred tomato salsa, and a side of rice',
         meatChoice: true,
+        image: '/dishes/quesadilla_plate.jpg',
       },
       {
         name: 'Shrimp Quesadilla Plate',

@@ -340,12 +340,24 @@ export default function Home({ onOpenChat }: HomeProps) {
 
         {/* CTA Buttons Block at the Bottom */}
         <div className="flex flex-col gap-3.5 mt-6 w-full">
+          {/* Website button */}
+          <a
+            id="home-website-btn"
+            href="https://omgcocina.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-gold w-full justify-center text-sm py-4 flex items-center gap-2"
+            style={{ borderRadius: '50px' }}
+          >
+            🌐 Visit Website
+          </a>
+
           {/* Feedback button */}
           <button
             id="home-feedback-btn"
             onClick={() => navigate('/feedback')}
             className="btn-gold w-full justify-center text-sm py-4 flex items-center gap-2"
-            style={{ borderRadius: '50px' }}
+            style={{ borderRadius: '50px', opacity: 0.85 }}
           >
             💬 Leave Feedback / Report Issues
           </button>
