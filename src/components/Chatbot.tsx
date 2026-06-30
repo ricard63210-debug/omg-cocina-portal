@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { X, Send } from 'lucide-react'
 import botAvatar from '../assets/bot-avatar.png'
+import { MENU_CATEGORIES } from './menuData'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -12,7 +13,49 @@ interface ChatbotProps {
   onExternalClose?: () => void
 }
 
-const SYSTEM_PROMPT = `You are OMG Bot, the friendly AI assistant for OMG Cocina, a family-owned Mexican restaurant at 1500 7th St #1F, Sacramento, CA 95814. Phone: (916) 553-7072. Hours: Mon 9am-7pm, Tue-Thu 9am-8pm, Fri 9am-7pm, Sat 10am-3pm, Sun closed. You help customers with menu questions, hours, location, and reservations. You speak in a warm, friendly tone and can respond in English or Spanish. Keep answers concise and helpful. Always encourage customers to visit or order on Uber Eats.`
+function formatMenuForBot(): string {
+  let text = 'OMG COCINA DIGITAL MENU:\n'
+  MENU_CATEGORIES.forEach(cat => {
+    text += `\n[Category: ${cat.label} ${cat.emoji}]\n`
+    cat.items.forEach(item => {
+      text += `- ${item.name} | Price: ${item.price}`
+      if (item.description) text += ` (${item.description})`
+      if (item.note) text += ` [Note: ${item.note}]`
+      if (item.addons) text += ` [Add-ons: ${item.addons.join(', ')}]`
+      text += '\n'
+    })
+  })
+  return text
+}
+
+const getSystemPrompt = (): string => {
+  const menuText = formatMenuForBot()
+  return `You are OMG Bot, the friendly AI assistant for OMG Cocina, a family-owned Mexican restaurant in Sacramento, CA.
+
+Restaurant Information:
+- Address: 1500 7th St #1F, Sacramento, CA 95814
+- Phone: (916) 553-7072
+- Hours:
+  * Monday: 9am-7pm
+  * Tuesday - Thursday: 9am-8pm
+  * Friday: 9am-7pm
+  * Saturday: 10am-3pm
+  * Sunday: Closed
+
+Socials & Important Links:
+- Instagram: https://www.instagram.com/omg.cocina/
+- TikTok: https://www.tiktok.com/t/ZP8GjwTpd/
+- Uber Eats (Order Online): https://www.ubereats.com/store/omg-cocina-mexican-restaurant/SR-uZ74BQ7qPa6TXCnftEQ
+
+Interaction Guidelines:
+- You help customers with menu questions, hours, location, and reservations.
+- You speak in a warm, friendly tone and can respond in English or Spanish.
+- Keep answers concise and helpful.
+- Suggest links naturally when relevant (e.g. if asked about delivery/online ordering, share the Uber Eats link; if asked about visual items/updates/photos, suggest following Instagram or TikTok).
+
+${menuText}
+`.trim()
+}
 
 const QUICK_PROMPTS = [
   'What are the hours?',
@@ -77,7 +120,7 @@ export default function Chatbot({ externalOpen, onExternalClose }: ChatbotProps)
         body: JSON.stringify({
           model: 'claude-sonnet-4-6',
           max_tokens: 512,
-          system: SYSTEM_PROMPT,
+          system: getSystemPrompt(),
           messages: [
             ...messages.map(m => ({ role: m.role, content: m.content })),
             { role: 'user', content: text },

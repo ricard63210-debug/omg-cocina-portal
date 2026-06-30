@@ -118,12 +118,23 @@ export default function Promotions() {
               href="https://www.instagram.com/omg.cocina/"
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-pink flex items-center justify-center p-3 rounded-full hover:scale-105"
-              style={{ width: '48px', height: '48px', minWidth: '48px' }}
+              className="btn-pink flex items-center justify-center rounded-full hover:scale-105"
+              style={{ width: '50px', height: '50px', minWidth: '50px', display: 'flex', padding: 0 }}
               aria-label="Instagram Link"
             >
               {/* Official Instagram Logo without letters */}
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="24" 
+                height="24" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="white" 
+                strokeWidth="2.2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+                style={{ width: '24px', height: '24px', display: 'block', minWidth: '24px', minHeight: '24px' }}
+              >
                 <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
                 <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
                 <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>

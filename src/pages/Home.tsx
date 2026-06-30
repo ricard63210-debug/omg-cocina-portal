@@ -150,7 +150,7 @@ export default function Home({ onOpenChat }: HomeProps) {
         {/* Floating Share Button on Home page */}
         <button
           onClick={handleShare}
-          className="absolute top-4 right-4 z-20 flex items-center justify-center p-2.5 rounded-full transition-all hover:scale-105"
+          className="absolute top-4 right-4 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all hover:scale-105 text-xs font-semibold"
           style={{
             color: '#D4AF37',
             background: 'rgba(212,175,55,0.12)',
@@ -159,7 +159,8 @@ export default function Home({ onOpenChat }: HomeProps) {
           }}
           aria-label="Share portal"
         >
-          <Share2 size={16} />
+          <Share2 size={13} />
+          Share
         </button>
 
         {/* Ambient glows */}

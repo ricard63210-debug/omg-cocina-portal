@@ -61,7 +61,7 @@ export default function PageLayout({ title, emoji, children }: PageLayoutProps) 
 
           <button
             onClick={handleShare}
-            className="flex items-center justify-center p-2 rounded-full transition-all"
+            className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-full transition-all"
             style={{
               color: '#D4AF37',
               background: 'rgba(212,175,55,0.08)',
@@ -69,7 +69,8 @@ export default function PageLayout({ title, emoji, children }: PageLayoutProps) 
             }}
             aria-label="Share page"
           >
-            <Share2 size={14} />
+            <Share2 size={13} />
+            Share
           </button>
         </div>
 
