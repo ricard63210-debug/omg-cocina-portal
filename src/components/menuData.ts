@@ -216,11 +216,13 @@ export const MENU_CATEGORIES: MenuCategory[] = [
         name: 'Carnita Plate',
         price: '$24.00',
         description: 'Citrus braised tender pulled pork with crispy exterior served over a bed of peppers and onions alongside pickled jalapeños, rice, beans, lettuce, pico de gallo, and choice of tortillas',
+        image: '/dishes/carnita_plate.jpg',
       },
       {
         name: 'Salmon Caribeño',
         price: '$23.00',
         description: 'Served over a bed of mixed veggies. Salmon topped with tamarind sauce, chipotle aioli sauce, mango mayo habanero, and pico de mango. Served with a side salad',
+        image: '/dishes/salmon_caribeno.jpg',
       },
     ],
   },
@@ -233,16 +235,19 @@ export const MENU_CATEGORIES: MenuCategory[] = [
         name: 'Mix Fajita',
         price: '$30.00',
         description: 'Served with rice, beans, lettuce, pico de gallo, sour cream and choice of tortillas',
+        image: '/dishes/mix_fajita.jpg',
       },
       {
         name: 'Shrimp Fajita',
         price: '$22.00',
         description: 'Served with rice, beans, lettuce, pico de gallo, sour cream and choice of tortillas',
+        image: '/dishes/shrimp_fajita.jpg',
       },
       {
         name: 'Chicken Fajita',
         price: '$18.00',
         description: 'Served with rice, beans, lettuce, pico de gallo, sour cream and choice of tortillas',
+        image: '/dishes/chicken_fajita.jpg',
       },
       {
         name: 'Veggie Fajita',
