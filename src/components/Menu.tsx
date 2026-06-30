@@ -241,7 +241,7 @@ export default function Menu() {
                   {selectedItem.ingredients && selectedItem.ingredients.length > 0 ? (
                     <div className="mb-5">
                       <h4 className="text-xs font-semibold uppercase tracking-wider mb-2.5" style={{ color: '#D4AF37' }}>
-                        Ingredients / Ingredientes
+                        Ingredients
                       </h4>
                       <div className="grid grid-cols-2 gap-2 text-xs" style={{ color: 'rgba(245,245,245,0.85)' }}>
                         {selectedItem.ingredients.map((ing, i) => (
@@ -255,10 +255,10 @@ export default function Menu() {
                   ) : (
                     <div className="mb-5">
                       <h4 className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: '#D4AF37' }}>
-                        Details / Detalles
+                        Details
                       </h4>
                       <p className="text-xs italic" style={{ color: 'rgba(245,245,245,0.45)' }}>
-                        Contact our waitstaff for full ingredients list. / Consulte a nuestro mesero para ingredientes completos.
+                        Contact our waitstaff for the full ingredients list.
                       </p>
                     </div>
                   )}
@@ -277,7 +277,7 @@ export default function Menu() {
                       >
                         <span className="text-lg leading-none">{selectedItem.spicy ? '🌶️' : '🔔'}</span>
                         <div>
-                          <p className="font-bold">{selectedItem.spicy ? 'Spicy / Picoso' : 'Not Spicy / No Picoso'}</p>
+                          <p className="font-bold">{selectedItem.spicy ? 'Spicy' : 'Not Spicy'}</p>
                           <p className="text-[10px] opacity-75 mt-0.5">
                             {selectedItem.spicy 
                               ? 'Contains hot chili peppers or spicy house sauces.' 
@@ -300,7 +300,7 @@ export default function Menu() {
                         <span className="text-lg leading-none">{selectedItem.glutenFree ? '🌾' : '⚠️'}</span>
                         <div>
                           <p className="font-bold">
-                            {selectedItem.glutenFree ? 'Gluten-Free / Libre de Gluten' : 'Contains Gluten / Contiene Gluten'}
+                            {selectedItem.glutenFree ? 'Gluten-Free' : 'Contains Gluten'}
                           </p>
                           <p className="text-[10px] opacity-75 mt-0.5">
                             {selectedItem.glutenFree 

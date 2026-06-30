@@ -60,7 +60,7 @@ const NAV_TILES: NavTile[] = [
     id: 'contact',
     emoji: '📞',
     label: 'Contact Us',
-    sublabel: 'Call, Text, WhatsApp & Email',
+    sublabel: 'Call, Text & Email',
     to: '/contact',
     gradient: 'linear-gradient(135deg, rgba(233,30,140,0.15) 0%, rgba(233,30,140,0.06) 100%)',
     border: 'rgba(233,30,140,0.25)',

@@ -76,7 +76,7 @@ export const MENU_CATEGORIES: MenuCategory[] = [
       {
         name: 'Chicken Salad',
         price: '$18.00',
-        description: 'Grilled chicken breast, romaine, tomato, avocado, grilled corn, and cucumber',
+        description: 'Tender fire-grilled chicken breast served over a fresh bed of crisp romaine lettuce, ripe tomatoes, creamy avocado, charred sweet corn, and refreshing cucumber.',
         image: '/dishes/chicken_salad.jpg',
         ingredients: ['Grilled chicken breast', 'Romaine lettuce', 'Tomatoes', 'Avocado slice', 'Grilled sweet corn', 'Fresh cucumber', 'House dressing'],
         glutenFree: true,
@@ -85,7 +85,7 @@ export const MENU_CATEGORIES: MenuCategory[] = [
       {
         name: 'Arrachera Salad',
         price: '$19.50',
-        description: 'Steak, romaine, tomato, avocado, grilled corn, and cucumber',
+        description: 'Juicy, flame-grilled arrachera steak served on a crisp bed of fresh romaine lettuce, vine-ripened tomatoes, buttery avocado slices, charred sweet corn, and crunchy cucumber.',
         image: '/dishes/arrachera_salad.jpg',
         ingredients: ['Grilled arrachera steak', 'Romaine lettuce', 'Tomatoes', 'Avocado slice', 'Grilled sweet corn', 'Fresh cucumber', 'House dressing'],
         glutenFree: true,
@@ -94,7 +94,7 @@ export const MENU_CATEGORIES: MenuCategory[] = [
       {
         name: 'Shrimp Salad',
         price: '$19.50',
-        description: 'Grilled shrimp, romaine, tomato, avocado, grilled corn, and cucumber',
+        description: 'Succulent, perfectly seasoned grilled shrimp served over crisp romaine lettuce, ripe tomato wedges, creamy avocado, fire-grilled corn, and cool cucumbers.',
         image: '/dishes/shrimp_salad.jpg',
         ingredients: ['Seasoned grilled shrimp', 'Romaine lettuce', 'Tomatoes', 'Avocado slice', 'Grilled sweet corn', 'Fresh cucumber', 'House dressing'],
         glutenFree: true,
@@ -121,7 +121,7 @@ export const MENU_CATEGORIES: MenuCategory[] = [
       {
         name: 'Shrimp Taco',
         price: '$5.00',
-        description: 'Breaded shrimp, chipotle aioli, mango mayo habanero, pico de mango, cheese, cabbage slaw on corn tortilla',
+        description: 'Crispy golden breaded shrimp topped with melted cheese, vibrant shredded cabbage, sweet mango pico de gallo, and drizzled with chipotle aioli and zesty mango-habanero sauce.',
         image: '/dishes/shrimp_taco.jpg',
         ingredients: ['Crispy breaded shrimp', 'Tomatillo salsa', 'Chipotle aioli', 'Mango-habanero mayo', 'Pico de mango', 'Melted cheese', 'Shredded cabbage', 'Warm corn tortilla'],
         glutenFree: false,
@@ -130,7 +130,7 @@ export const MENU_CATEGORIES: MenuCategory[] = [
       {
         name: 'Fish Taco',
         price: '$5.00',
-        description: 'Breaded fish, chipotle aioli, mango mayo habanero, pico de mango, cabbage slaw on corn tortilla',
+        description: 'Perfectly fried crispy white fish nestled in a warm corn tortilla, dressed with shredded cabbage, sweet mango pico de gallo, and a dual drizzle of chipotle aioli and mango-habanero dressing.',
         image: '/dishes/fish_taco.jpg',
         ingredients: ['Crispy breaded fish fillet', 'Tomatillo salsa', 'Chipotle aioli', 'Mango-habanero mayo', 'Pico de mango', 'Shredded cabbage', 'Warm corn tortilla'],
         glutenFree: false,
@@ -158,7 +158,7 @@ export const MENU_CATEGORIES: MenuCategory[] = [
       {
         name: 'Super Nachos',
         price: '$18.00',
-        description: 'Housemade tortilla chips, refried beans, choice of meat, melted cheese, guacamole, pico de gallo, sour cream, and jalapeños',
+        description: 'A mountain of warm, crispy housemade tortilla chips layered with savory refried beans, melted Monterey Jack cheese, fresh guacamole, cool Mexican sour cream, pico de gallo, and pickled jalapeños.',
         meatChoice: true,
         image: '/dishes/super_nachos.jpg',
         ingredients: ['Crispy housemade tortilla chips', 'Warm refried beans', 'Choice of meat (Carne Asada, Chicken, etc.)', 'Melted Monterey Jack cheese', 'Fresh guacamole', 'Pico de gallo', 'Mexican sour cream', 'Pickled jalapeños'],
@@ -187,7 +187,7 @@ export const MENU_CATEGORIES: MenuCategory[] = [
       {
         name: 'OMG Taco Plate',
         price: '$17.00',
-        description: 'Two tacos, choice of one meat, cheese, pico de mango, pickled onions, with side of rice',
+        description: 'Two double-tortilla tacos featuring your choice of perfectly seasoned meats, melted cheese, sweet mango pico, and quick-pickled red onions, served with a side of classic Mexican rice.',
         note: '⏱ Takes 15–20 min to make',
         meatChoice: true,
         image: '/dishes/omg_taco_plate.jpg',
@@ -203,7 +203,7 @@ export const MENU_CATEGORIES: MenuCategory[] = [
       {
         name: 'Burrito',
         price: '$16.50',
-        description: 'Choice of meat, rice, beans, sour cream, shredded cheese, served with lettuce, pico de gallo, guacamole and charred tomato salsa',
+        description: 'A large warm flour tortilla stuffed with your choice of savory meat, red rice, refried beans, sour cream, and melted cheese, accompanied by guacamole, lettuce, fresh pico, and charred tomato salsa.',
         meatChoice: true,
         image: '/dishes/burrito.jpg',
         ingredients: ['Choice of meat', 'Mexican red rice', 'Refried beans', 'Sour cream', 'Shredded cheese blend', 'Lettuce', 'Pico de gallo', 'Fresh guacamole', 'Charred tomato salsa', 'Large flour tortilla'],
@@ -218,7 +218,7 @@ export const MENU_CATEGORIES: MenuCategory[] = [
       {
         name: 'Enchilada Plate',
         price: '$18.00',
-        description: 'Three chicken and cheese enchiladas in red guajillo, mole, & green tomatillo sauce, cabbage, pickled onions, topped with cheese, avocado, and sour cream. Served with side of rice',
+        description: 'Three corn tortillas filled with shredded chicken and cheese, each bathed in distinct red guajillo, rich mole negro, and green tomatillo sauces, topped with cabbage, pickled onions, avocado, and sour cream.',
         note: '⚠️ Mole contains nuts/peanuts',
         image: '/dishes/enchilada_plate.jpg',
         ingredients: ['Three corn tortillas stuffed with chicken and cheese', 'Red guajillo pepper sauce', 'Rich mole negro sauce', 'Green tomatillo salsa', 'Shredded cabbage', 'Pickled red onions', 'Melted cheese', 'Avocado slice', 'Mexican sour cream', 'Side of rice'],
@@ -228,7 +228,7 @@ export const MENU_CATEGORIES: MenuCategory[] = [
       {
         name: 'Quesadilla Plate',
         price: '$17.00',
-        description: 'Flour tortilla filled with cheese and choice of meat, served with lettuce, sour cream, guacamole, charred tomato salsa, and a side of rice',
+        description: 'A large, golden-brown griddled flour tortilla loaded with melted cheese and your choice of seasoned meat, served alongside shredded lettuce, cool sour cream, fresh guacamole, tomato salsa, and rice.',
         meatChoice: true,
         image: '/dishes/quesadilla_plate.jpg',
         ingredients: ['Folded flour tortilla with melted cheese', 'Choice of meat', 'Shredded lettuce', 'Sour cream', 'Fresh guacamole', 'Charred tomato salsa', 'Side of rice'],
@@ -248,7 +248,7 @@ export const MENU_CATEGORIES: MenuCategory[] = [
       {
         name: 'Carnita Plate',
         price: '$24.00',
-        description: 'Citrus braised tender pulled pork with crispy exterior served over a bed of peppers and onions alongside pickled jalapeños, rice, beans, lettuce, pico de gallo, and choice of tortillas',
+        description: 'Tender citrus-braised pork, caramelized to a delicate crisp, served on a sizzling bed of bell peppers and onions, with rice, beans, fresh guacamole, jalapeños, and warm tortillas.',
         image: '/dishes/carnita_plate.jpg',
         ingredients: ['Slow-cooked citrus-marinated pulled pork (carnitas)', 'Grilled bell peppers & onions', 'Pickled jalapeños', 'Mexican red rice', 'Refried beans', 'Shredded lettuce', 'Pico de gallo', 'Choice of warm corn or flour tortillas'],
         glutenFree: true,
@@ -257,7 +257,7 @@ export const MENU_CATEGORIES: MenuCategory[] = [
       {
         name: 'Salmon Caribeño',
         price: '$23.00',
-        description: 'Served over a bed of mixed veggies. Salmon topped with tamarind sauce, chipotle aioli sauce, mango mayo habanero, and pico de mango. Served with a side salad',
+        description: 'Pan-seared premium salmon fillet served over seasoned mixed vegetables, glazed with tamarindo reduction, chipotle aioli, and mango-habanero sauce, crowned with sweet mango pico.',
         image: '/dishes/salmon_caribeno.jpg',
         ingredients: ['Pan-seared salmon fillet', 'Rich tamarindo glaze', 'Chipotle aioli sauce', 'Mango-habanero mayo', 'Pico de mango', 'Assorted mixed grilled vegetables', 'Fresh side salad'],
         glutenFree: true,
@@ -273,7 +273,7 @@ export const MENU_CATEGORIES: MenuCategory[] = [
       {
         name: 'Mix Fajita',
         price: '$30.00',
-        description: 'Served with rice, beans, lettuce, pico de gallo, sour cream and choice of tortillas',
+        description: 'A sizzling platter of tender grilled steak and chicken strips cooked with bell peppers and onions, served with rice, refried beans, fresh lettuce, pico de gallo, sour cream, and warm tortillas.',
         image: '/dishes/mix_fajita.jpg',
         ingredients: ['Grilled chicken breast slices', 'Tender steak slices', 'Sautéed bell peppers and sweet onions', 'Mexican red rice', 'Refried beans', 'Shredded lettuce', 'Pico de gallo', 'Sour cream', 'Choice of warm tortillas'],
         glutenFree: true,
@@ -282,7 +282,7 @@ export const MENU_CATEGORIES: MenuCategory[] = [
       {
         name: 'Shrimp Fajita',
         price: '$22.00',
-        description: 'Served with rice, beans, lettuce, pico de gallo, sour cream and choice of tortillas',
+        description: 'Plump, seasoned shrimp sautéed to perfection with sweet onions and bell peppers, presented on a hot skillet with Mexican rice, refried beans, lettuce, fresh pico, sour cream, and warm tortillas.',
         image: '/dishes/shrimp_fajita.jpg',
         ingredients: ['Succulent grilled shrimp', 'Sautéed bell peppers and sweet onions', 'Mexican red rice', 'Refried beans', 'Shredded lettuce', 'Pico de gallo', 'Sour cream', 'Choice of warm tortillas'],
         glutenFree: true,
@@ -291,7 +291,7 @@ export const MENU_CATEGORIES: MenuCategory[] = [
       {
         name: 'Chicken Fajita',
         price: '$18.00',
-        description: 'Served with rice, beans, lettuce, pico de gallo, sour cream and choice of tortillas',
+        description: 'Juicy strips of marinated chicken breast grilled with crisp bell peppers and sweet onions, accompanied by Mexican rice, refried beans, fresh lettuce, pico de gallo, sour cream, and warm tortillas.',
         image: '/dishes/chicken_fajita.jpg',
         ingredients: ['Marinated grilled chicken breast slices', 'Sautéed bell peppers and sweet onions', 'Mexican red rice', 'Refried beans', 'Shredded lettuce', 'Pico de gallo', 'Sour cream', 'Choice of warm tortillas'],
         glutenFree: true,

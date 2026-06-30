@@ -34,16 +34,6 @@ const CONTACT_METHODS: ContactMethod[] = [
     textColor: '#E91E8C',
   },
   {
-    id: 'whatsapp',
-    icon: <span style={{ fontSize: '1.75rem' }}>💬</span>,
-    label: 'WhatsApp',
-    sublabel: 'Chat on WhatsApp',
-    href: 'https://wa.me/19165537072',
-    gradient: 'linear-gradient(135deg, rgba(37,211,102,0.15) 0%, rgba(37,211,102,0.06) 100%)',
-    border: 'rgba(37,211,102,0.3)',
-    textColor: '#25D366',
-  },
-  {
     id: 'email',
     icon: <Mail size={28} />,
     label: 'Email Us',

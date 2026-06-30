@@ -53,17 +53,6 @@ export default function Footer() {
                 (916) 553-7072
               </a>
               <a
-                id="footer-whatsapp"
-                href="https://wa.me/19165537072"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 text-sm transition-colors hover:text-white"
-                style={{ color: 'rgba(245,245,245,0.6)' }}
-              >
-                <span style={{ color: '#25D366', fontSize: '1rem' }}>📱</span>
-                WhatsApp
-              </a>
-              <a
                 id="footer-maps"
                 href="https://maps.google.com/?q=1500+7th+St+1F+Sacramento+CA+95814"
                 target="_blank"
