@@ -72,6 +72,11 @@ export const MENU_CATEGORIES: MenuCategory[] = [
       {
         name: 'Green Chicken Pozole',
         price: '$15.00',
+        description: 'Traditional Mexican hominy soup with tender shredded chicken in a flavorful green tomatillo broth. Served with lime wedges, fresh radishes, shredded cabbage, oregano, and crispy tostadas on the side.',
+        image: '/dishes/green_chicken_pozole.jpg',
+        ingredients: ['Shredded chicken breast', 'Hominy (cacahuazintle)', 'Green tomatillo broth', 'Jalapeños', 'Radishes', 'Lime wedges', 'Crispy tostadas'],
+        glutenFree: true,
+        spicy: true,
       },
       {
         name: 'Chicken Salad',
@@ -104,6 +109,10 @@ export const MENU_CATEGORIES: MenuCategory[] = [
         name: 'Salmon Salad',
         price: '$21.00',
         description: 'Achiote marinated salmon, romaine, tomato, avocado, grilled corn, and cucumber. Topped with tamarindo sauce, chipotle aioli sauce, mango mayo habanero, and pico de mango',
+        image: '/dishes/salmon_salad.jpg',
+        ingredients: ['Achiote marinated salmon', 'Romaine lettuce', 'Tomato', 'Avocado slice', 'Grilled corn', 'Cucumber', 'Tamarindo sauce', 'Chipotle aioli', 'Mango-habanero mayo', 'Pico de mango'],
+        glutenFree: true,
+        spicy: false,
       },
     ],
   },
@@ -244,6 +253,10 @@ export const MENU_CATEGORIES: MenuCategory[] = [
         name: 'Arrachera Plate',
         price: '$25.00',
         description: 'Grilled arrachera steak marinated in house seasoning served on top of grilled onions, served with rice, beans, lettuce, guacamole and choice of tortillas',
+        image: '/dishes/arrachera_plate.jpg',
+        ingredients: ['Grilled arrachera steak', 'Grilled onions', 'Mexican red rice', 'Refried beans', 'Shredded lettuce', 'Guacamole', 'Choice of warm corn or flour tortillas'],
+        glutenFree: true,
+        spicy: false,
       },
       {
         name: 'Carnita Plate',
