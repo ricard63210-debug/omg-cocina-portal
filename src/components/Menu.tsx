@@ -7,6 +7,7 @@ import { AlertCircle, ChevronDown, X } from 'lucide-react'
 export default function Menu() {
   const [activeTab, setActiveTab] = useState('appetizers')
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null)
+  const [openDropdownIdx, setOpenDropdownIdx] = useState<number | null>(null)
 
   const activeCategory = MENU_CATEGORIES.find(c => c.id === activeTab)
 
@@ -20,7 +21,17 @@ export default function Menu() {
 
         {/* Tab navigation - horizontal scroll slide bar */}
         <div
-          className="flex gap-2 overflow-x-auto pb-4 mb-8 scroll-smooth no-scrollbar select-none justify-start md:justify-center px-1"
+          className="sticky top-[57px] z-40 flex gap-2 overflow-x-auto py-3 mb-8 scroll-smooth no-scrollbar select-none justify-start md:justify-center px-1"
+          style={{
+            background: 'rgba(10,10,10,0.95)',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+            borderBottom: '1px solid rgba(233,30,140,0.1)',
+            marginRight: '-1.5rem',
+            marginLeft: '-1.5rem',
+            paddingRight: '1.5rem',
+            paddingLeft: '1.5rem',
+          }}
           role="tablist"
           aria-label="Menu categories"
         >
@@ -32,7 +43,10 @@ export default function Menu() {
               aria-selected={activeTab === cat.id}
               aria-controls={`panel-${cat.id}`}
               className={`menu-tab ${activeTab === cat.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(cat.id)}
+              onClick={() => {
+                setActiveTab(cat.id)
+                setOpenDropdownIdx(null)
+              }}
             >
               <span className="mr-1">{cat.emoji}</span>
               {cat.label}
@@ -59,8 +73,13 @@ export default function Menu() {
               animation: 'fadeIn 0.3s ease-out',
             }}
           >
-            {activeCategory.items.map((item, idx) => (
-              <div key={idx} className="menu-item-card">
+            {activeCategory.items.map((item, idx) => {
+              const isDropdownOpen = openDropdownIdx === idx
+              return (
+                <div
+                  key={idx}
+                  className={`menu-item-card transition-all duration-300 ${isDropdownOpen ? 'relative z-30 ring-1 ring-[#FF6BB5]/30' : ''}`}
+                >
                 {/* Image */}
                 {item.image && (
                   <button
@@ -126,7 +145,10 @@ export default function Menu() {
 
                 {/* Meat choice dropdown (informational) */}
                 {item.meatChoice && (
-                  <MeatSelector />
+                  <MeatSelector
+                    isOpen={isDropdownOpen}
+                    onToggle={() => setOpenDropdownIdx(isDropdownOpen ? null : idx)}
+                  />
                 )}
 
                 {/* Addons */}
@@ -148,7 +170,7 @@ export default function Menu() {
                   </div>
                 )}
               </div>
-            ))}
+            )})}
           </div>
         )}
 
@@ -321,14 +343,13 @@ export default function Menu() {
   )
 }
 
-function MeatSelector() {
-  const [open, setOpen] = useState(false)
+function MeatSelector({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }) {
   const [selected, setSelected] = useState<string>('Select meat option')
 
   return (
-    <div className={`relative mt-2 ${open ? 'z-30' : ''}`}>
+    <div className="relative mt-2">
       <button
-        onClick={() => setOpen(o => !o)}
+        onClick={onToggle}
         className="flex items-center justify-between w-full text-xs px-3 py-1.5 rounded-lg transition-colors"
         style={{
           background: 'rgba(233,30,140,0.08)',
@@ -336,12 +357,12 @@ function MeatSelector() {
           color: '#FF6BB5',
         }}
         aria-haspopup="listbox"
-        aria-expanded={open}
+        aria-expanded={isOpen}
       >
         <span>🥩 {selected}</span>
-        <ChevronDown size={12} className={`transition-transform ${open ? 'rotate-180' : ''}`} />
+        <ChevronDown size={12} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
-      {open && (
+      {isOpen && (
         <ul
           role="listbox"
           className="absolute z-20 mt-1 w-full rounded-lg overflow-hidden shadow-xl"
@@ -356,7 +377,7 @@ function MeatSelector() {
               style={{ color: 'rgba(245,245,245,0.8)' }}
               onMouseEnter={e => (e.currentTarget.style.background = 'rgba(233,30,140,0.12)')}
               onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-              onClick={() => { setSelected(opt.label); setOpen(false) }}
+              onClick={() => { setSelected(opt.label); onToggle() }}
             >
               {opt.label}
             </li>
