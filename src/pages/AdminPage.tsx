@@ -82,6 +82,7 @@ export default function AdminPage() {
   const [feedbacks, setFeedbacks] = useState<ParsedFeedback[]>([])
   const [loading, setLoading] = useState(false)
   const [dbError, setDbError] = useState('')
+  const [activeAdminTab, setActiveAdminTab] = useState<'Órdenes' | 'Feedback' | 'Analytics'>('Órdenes')
 
   // Filters & Search
   const [search, setSearch] = useState('')
@@ -229,23 +230,25 @@ export default function AdminPage() {
   }
 
   return (
-    <PageLayout title="Complaints Dashboard" emoji="📊">
+    <PageLayout title="Admin Panel" emoji="⚙️">
       <div className="section-wrapper" style={{ maxWidth: '1200px', padding: '2rem 1.5rem 4rem' }}>
         
         {/* Header Action Row */}
-        <div className="flex items-center justify-between gap-4 mb-6">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
           <div>
             <h2 className="font-display font-bold text-lg text-white">Management Console</h2>
-            <p className="text-xs text-white/50">View, search, and manage customer feedback logs.</p>
+            <p className="text-xs text-white/50">Manage operations, customer logs, and website analytics.</p>
           </div>
           <div className="flex gap-2">
-            <button
-              onClick={fetchFeedbacks}
-              className="px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all text-white hover:bg-white/5"
-              style={{ borderColor: 'rgba(255,255,255,0.15)', background: 'transparent' }}
-            >
-              🔄 Refresh
-            </button>
+            {activeAdminTab === 'Feedback' && (
+              <button
+                onClick={fetchFeedbacks}
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all text-white hover:bg-white/5"
+                style={{ borderColor: 'rgba(255,255,255,0.15)', background: 'transparent' }}
+              >
+                🔄 Refresh
+              </button>
+            )}
             <button
               onClick={handleLogout}
               className="btn-pink py-1.5 px-3 rounded-lg text-xs font-semibold"
@@ -255,195 +258,436 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* Metrics Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="p-4 rounded-xl text-center" style={{ background: '#141414', border: '1px solid rgba(255,255,255,0.06)' }}>
-            <p className="text-[10px] uppercase font-bold text-white/40 tracking-wider mb-1">Total Submissions</p>
-            <p className="text-2xl font-bold text-white">{totalCount}</p>
-          </div>
-          <div className="p-4 rounded-xl text-center" style={{ background: '#141414', border: '1px solid rgba(255,255,255,0.06)' }}>
-            <p className="text-[10px] uppercase font-bold text-white/40 tracking-wider mb-1">Average Rating</p>
-            <p className="text-2xl font-bold" style={{ color: '#D4AF37' }}>★ {averageRating}</p>
-          </div>
-          <div className="p-4 rounded-xl text-center" style={{ background: '#141414', border: '1px solid rgba(255,255,255,0.06)' }}>
-            <p className="text-[10px] uppercase font-bold text-white/40 tracking-wider mb-1">Spicy Alert items</p>
-            <p className="text-2xl font-bold text-[#E91E8C]">{feedbacks.filter(f => f.rawMessage.includes('🌶️') || f.rawMessage.toLowerCase().includes('picoso')).length}</p>
-          </div>
-          <div className="p-4 rounded-xl text-center" style={{ background: '#141414', border: '1px solid rgba(255,255,255,0.06)' }}>
-            <p className="text-[10px] uppercase font-bold text-white/40 tracking-wider mb-1">Follow-up Needed</p>
-            <p className="text-2xl font-bold text-green-400">{feedbacks.filter(f => f.phone !== 'N/A').length}</p>
-          </div>
+        {/* Admin Tabs */}
+        <div className="flex gap-2 border-b border-white/10 pb-px mb-8 overflow-x-auto no-scrollbar">
+          {(['Órdenes', 'Feedback', 'Analytics'] as const).map(tab => (
+            <button
+              key={tab}
+              onClick={() => setActiveAdminTab(tab)}
+              className={`px-4 py-2.5 text-sm font-semibold border-b-2 transition-all whitespace-nowrap ${
+                activeAdminTab === tab
+                  ? 'border-[#E91E8C] text-[#E91E8C]'
+                  : 'border-transparent text-white/50 hover:text-white/80'
+              }`}
+            >
+              {tab === 'Órdenes' ? '📋 ' : tab === 'Feedback' ? '💬 ' : '📈 '}
+              {tab}
+            </button>
+          ))}
         </div>
 
-        {/* Filter Controls Row */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
-          {/* Search bar */}
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search comments, customer name, phone..."
-              className="form-input w-full pl-9"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-            />
-            <Search size={14} className="absolute left-3 top-3.5 text-white/30" />
-          </div>
-
-          {/* Category Filter */}
-          <div>
-            <select
-              className="form-input w-full"
-              value={categoryFilter}
-              onChange={e => setCategoryFilter(e.target.value)}
+        {/* TAB Content: Orders */}
+        {activeAdminTab === 'Órdenes' && (
+          <div className="space-y-6">
+            {/* Empty State */}
+            <div 
+              className="text-center py-12 px-4 rounded-2xl border border-dashed"
+              style={{ background: '#141414', borderColor: 'rgba(233,30,140,0.15)' }}
             >
-              <option value="All">All Categories</option>
-              <option value="Food">Food</option>
-              <option value="Service">Service</option>
-              <option value="Atmosphere">Atmosphere</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
+              <p className="text-3xl mb-3">🛒</p>
+              <h3 className="font-semibold text-sm text-white">No orders yet</h3>
+              <p className="text-xs text-white/40 mt-1 max-w-sm mx-auto">
+                No orders yet. Orders will appear here in real time once the cart and payment system is connected.
+              </p>
+            </div>
 
-          {/* Rating Filter */}
-          <div>
-            <select
-              className="form-input w-full"
-              value={ratingFilter}
-              onChange={e => setRatingFilter(e.target.value)}
-            >
-              <option value="All">All Ratings</option>
-              <option value="5">5 Stars</option>
-              <option value="4">4 Stars</option>
-              <option value="3">3 Stars</option>
-              <option value="2">2 Stars</option>
-              <option value="1">1 Star</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Database Status Alert */}
-        {dbError && (
-          <div className="p-4 rounded-xl mb-6 border text-xs bg-red-950/20 border-red-900 text-red-300">
-            ⚠️ Database connection issue: {dbError}
-          </div>
-        )}
-
-        {/* Loader */}
-        {loading ? (
-          <div className="text-center py-16">
-            <div className="inline-block w-8 h-8 rounded-full border-2 border-t-pink animate-spin" />
-            <p className="text-xs text-white/40 mt-3">Fetching complaints...</p>
-          </div>
-        ) : filteredFeedbacks.length === 0 ? (
-          <div className="text-center py-16 rounded-2xl" style={{ background: '#141414', border: '1px solid rgba(255,255,255,0.04)' }}>
-            <p className="text-2xl mb-2">📭</p>
-            <p className="font-semibold text-sm text-white">No complaints found</p>
-            <p className="text-xs text-white/40 mt-1">Try adjusting your filters or search terms.</p>
-          </div>
-        ) : (
-          /* Complaints List */
-          <div className="space-y-4">
-            {filteredFeedbacks.map(item => (
-              <div 
-                key={item.id}
-                className="rounded-2xl p-5 md:p-6 transition-all duration-200"
-                style={{ 
-                  background: '#161616', 
-                  border: '1px solid rgba(255,255,255,0.06)'
-                }}
-              >
-                {/* Upper Metadata Row */}
-                <div className="flex flex-wrap items-start justify-between gap-3 pb-4 mb-4 border-b border-white/5">
-                  <div className="flex items-center gap-3">
+            {/* Mock / Placeholder Orders */}
+            <div>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[#D4AF37] mb-4">
+                Live Preview: Incoming Orders Format
+              </h3>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {/* Pending Order */}
+                <div 
+                  className="rounded-2xl p-5 border transition-all duration-300 hover:border-[#E91E8C]/20"
+                  style={{ background: '#161616', borderColor: 'rgba(255,255,255,0.06)' }}
+                >
+                  <div className="flex justify-between items-start gap-3 pb-3 mb-3 border-b border-white/5">
+                    <div>
+                      <h4 className="font-display font-bold text-sm text-white">Order #1204</h4>
+                      <p className="text-[10px] text-white/40 mt-0.5">Table 4 • 2 mins ago</p>
+                    </div>
                     <span 
-                      className="text-xs font-bold px-2.5 py-0.5 rounded-full"
-                      style={{ 
-                        background: 'rgba(233,30,140,0.1)', 
-                        border: '1px solid rgba(233,30,140,0.2)',
-                        color: '#E91E8C'
-                      }}
+                      className="text-[10px] font-bold px-2 py-0.5 rounded-full border bg-yellow-500/10 border-yellow-500/30 text-yellow-500"
                     >
-                      {item.category}
-                    </span>
-                    <span className="font-display font-bold text-sm text-white">
-                      {item.name}
-                    </span>
-                    <span className="text-xs text-yellow-500 font-bold">
-                      {'★'.repeat(item.rating)}{'☆'.repeat(5 - item.rating)}
+                      ● Pending
                     </span>
                   </div>
                   
-                  <div className="flex items-center gap-3 text-xs text-white/40">
-                    <span>{item.created_at}</span>
-                    <button
-                      onClick={() => handleDelete(item.id)}
-                      className="p-1 text-white/30 hover:text-red-400 rounded transition-colors"
-                      title="Delete log"
-                    >
-                      <Trash2 size={15} />
-                    </button>
+                  <div className="space-y-1.5 mb-4 text-xs text-white/80">
+                    <div className="flex justify-between">
+                      <span>2x Street Taco (Carne Asada)</span>
+                      <span className="text-white/40">$6.00</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>1x Green Chicken Pozole</span>
+                      <span className="text-white/40">$15.00</span>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-center pt-3 border-t border-white/5">
+                    <span className="text-[10px] uppercase font-bold text-white/40">Total Amount</span>
+                    <span className="text-sm font-bold text-[#D4AF37]">$21.00</span>
                   </div>
                 </div>
 
-                {/* Grid details (Phone, Server, Table, Date, Time) */}
-                <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-4 bg-black/25 p-3.5 rounded-xl border border-white/5">
-                  {/* Phone */}
-                  <div className="flex items-start gap-2">
-                    <Phone size={13} className="text-[#D4AF37] mt-0.5 shrink-0" />
+                {/* Preparing Order */}
+                <div 
+                  className="rounded-2xl p-5 border transition-all duration-300 hover:border-[#E91E8C]/20"
+                  style={{ background: '#161616', borderColor: 'rgba(255,255,255,0.06)' }}
+                >
+                  <div className="flex justify-between items-start gap-3 pb-3 mb-3 border-b border-white/5">
                     <div>
-                      <p className="text-[10px] text-white/40 uppercase font-semibold">Phone</p>
-                      <p className="text-xs font-medium text-white">{item.phone}</p>
+                      <h4 className="font-display font-bold text-sm text-white">Order #1203</h4>
+                      <p className="text-[10px] text-white/40 mt-0.5">Table 12 • 8 mins ago</p>
                     </div>
+                    <span 
+                      className="text-[10px] font-bold px-2 py-0.5 rounded-full border bg-[#E91E8C]/10 border-[#E91E8C]/30 text-[#FF6BB5]"
+                    >
+                      ● Preparing
+                    </span>
                   </div>
                   
-                  {/* Server */}
-                  <div className="flex items-start gap-2">
-                    <User size={13} className="text-[#D4AF37] mt-0.5 shrink-0" />
-                    <div>
-                      <p className="text-[10px] text-white/40 uppercase font-semibold">Server Info</p>
-                      <p className="text-xs font-medium text-white">{item.server}</p>
+                  <div className="space-y-1.5 mb-4 text-xs text-white/80">
+                    <div className="flex justify-between">
+                      <span>1x Arrachera Plate</span>
+                      <span className="text-white/40">$25.00</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>1x Cheese Dip</span>
+                      <span className="text-white/40">$9.50</span>
                     </div>
                   </div>
 
-                  {/* Table */}
-                  <div className="flex items-start gap-2">
-                    <Hash size={13} className="text-[#D4AF37] mt-0.5 shrink-0" />
-                    <div>
-                      <p className="text-[10px] text-white/40 uppercase font-semibold">Table #</p>
-                      <p className="text-xs font-medium text-white">{item.table}</p>
-                    </div>
-                  </div>
-
-                  {/* Date */}
-                  <div className="flex items-start gap-2">
-                    <Calendar size={13} className="text-[#D4AF37] mt-0.5 shrink-0" />
-                    <div>
-                      <p className="text-[10px] text-white/40 uppercase font-semibold">Visit Date</p>
-                      <p className="text-xs font-medium text-white">{item.date}</p>
-                    </div>
-                  </div>
-
-                  {/* Time */}
-                  <div className="flex items-start gap-2 col-span-2 sm:col-span-1">
-                    <Clock size={13} className="text-[#D4AF37] mt-0.5 shrink-0" />
-                    <div>
-                      <p className="text-[10px] text-white/40 uppercase font-semibold">Visit Time</p>
-                      <p className="text-xs font-medium text-white">{item.time}</p>
-                    </div>
+                  <div className="flex justify-between items-center pt-3 border-t border-white/5">
+                    <span className="text-[10px] uppercase font-bold text-white/40">Total Amount</span>
+                    <span className="text-sm font-bold text-[#D4AF37]">$34.50</span>
                   </div>
                 </div>
 
-                {/* Complaint Comments */}
-                <div>
-                  <p className="text-[10px] text-white/40 uppercase font-semibold mb-1">Customer Comments</p>
-                  <p className="text-sm leading-relaxed text-white/95 whitespace-pre-wrap">
-                    {item.comments}
-                  </p>
+                {/* Ready Order */}
+                <div 
+                  className="rounded-2xl p-5 border transition-all duration-300 hover:border-[#E91E8C]/20"
+                  style={{ background: '#161616', borderColor: 'rgba(255,255,255,0.06)' }}
+                >
+                  <div className="flex justify-between items-start gap-3 pb-3 mb-3 border-b border-white/5">
+                    <div>
+                      <h4 className="font-display font-bold text-sm text-white">Order #1202</h4>
+                      <p className="text-[10px] text-white/40 mt-0.5">Table 7 • 15 mins ago</p>
+                    </div>
+                    <span 
+                      className="text-[10px] font-bold px-2 py-0.5 rounded-full border bg-green-500/10 border-green-500/30 text-green-400"
+                    >
+                      ● Ready
+                    </span>
+                  </div>
+                  
+                  <div className="space-y-1.5 mb-4 text-xs text-white/80">
+                    <div className="flex justify-between">
+                      <span>1x Salmon Salad</span>
+                      <span className="text-white/40">$21.00</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>1x Guacamole</span>
+                      <span className="text-white/40">$10.50</span>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-center pt-3 border-t border-white/5">
+                    <span className="text-[10px] uppercase font-bold text-white/40">Total Amount</span>
+                    <span className="text-sm font-bold text-[#D4AF37]">$31.50</span>
+                  </div>
                 </div>
               </div>
-            ))}
+            </div>
           </div>
         )}
+
+        {/* TAB Content: Feedback */}
+        {activeAdminTab === 'Feedback' && (
+          <div className="space-y-6 animate-fade-in">
+            {/* Metrics Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="p-4 rounded-xl text-center" style={{ background: '#141414', border: '1px solid rgba(255,255,255,0.06)' }}>
+                <p className="text-[10px] uppercase font-bold text-white/40 tracking-wider mb-1">Total Submissions</p>
+                <p className="text-2xl font-bold text-white">{totalCount}</p>
+              </div>
+              <div className="p-4 rounded-xl text-center" style={{ background: '#141414', border: '1px solid rgba(255,255,255,0.06)' }}>
+                <p className="text-[10px] uppercase font-bold text-white/40 tracking-wider mb-1">Average Rating</p>
+                <p className="text-2xl font-bold" style={{ color: '#D4AF37' }}>★ {averageRating}</p>
+              </div>
+              <div className="p-4 rounded-xl text-center" style={{ background: '#141414', border: '1px solid rgba(255,255,255,0.06)' }}>
+                <p className="text-[10px] uppercase font-bold text-white/40 tracking-wider mb-1">Spicy Alert items</p>
+                <p className="text-2xl font-bold text-[#E91E8C]">{feedbacks.filter(f => f.rawMessage.includes('🌶️') || f.rawMessage.toLowerCase().includes('picoso')).length}</p>
+              </div>
+              <div className="p-4 rounded-xl text-center" style={{ background: '#141414', border: '1px solid rgba(255,255,255,0.06)' }}>
+                <p className="text-[10px] uppercase font-bold text-white/40 tracking-wider mb-1">Follow-up Needed</p>
+                <p className="text-2xl font-bold text-green-400">{feedbacks.filter(f => f.phone !== 'N/A').length}</p>
+              </div>
+            </div>
+
+            {/* Filter Controls Row */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {/* Search bar */}
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search comments, customer name, phone..."
+                  className="form-input w-full pl-9"
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                />
+                <Search size={14} className="absolute left-3 top-3.5 text-white/30" />
+              </div>
+
+              {/* Category Filter */}
+              <div>
+                <select
+                  className="form-input w-full"
+                  value={categoryFilter}
+                  onChange={e => setCategoryFilter(e.target.value)}
+                >
+                  <option value="All">All Categories</option>
+                  <option value="Food">Food</option>
+                  <option value="Service">Service</option>
+                  <option value="Atmosphere">Atmosphere</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              {/* Rating Filter */}
+              <div>
+                <select
+                  className="form-input w-full"
+                  value={ratingFilter}
+                  onChange={e => setRatingFilter(e.target.value)}
+                >
+                  <option value="All">All Ratings</option>
+                  <option value="5">5 Stars</option>
+                  <option value="4">4 Stars</option>
+                  <option value="3">3 Stars</option>
+                  <option value="2">2 Stars</option>
+                  <option value="1">1 Star</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Database Status Alert */}
+            {dbError && (
+              <div className="p-4 rounded-xl border text-xs bg-red-950/20 border-red-900 text-red-300">
+                ⚠️ Database connection issue: {dbError}
+              </div>
+            )}
+
+            {/* Loader */}
+            {loading ? (
+              <div className="text-center py-16">
+                <div className="inline-block w-8 h-8 rounded-full border-2 border-t-pink animate-spin" />
+                <p className="text-xs text-white/40 mt-3">Fetching complaints...</p>
+              </div>
+            ) : filteredFeedbacks.length === 0 ? (
+              <div className="text-center py-16 rounded-2xl" style={{ background: '#141414', border: '1px solid rgba(255,255,255,0.04)' }}>
+                <p className="text-2xl mb-2">📭</p>
+                <p className="font-semibold text-sm text-white">No complaints found</p>
+                <p className="text-xs text-white/40 mt-1">Try adjusting your filters or search terms.</p>
+              </div>
+            ) : (
+              /* Complaints List */
+              <div className="space-y-4">
+                {filteredFeedbacks.map(item => (
+                  <div 
+                    key={item.id}
+                    className="rounded-2xl p-5 md:p-6 transition-all duration-200 border"
+                    style={{ 
+                      background: '#161616', 
+                      borderColor: 'rgba(255,255,255,0.06)'
+                    }}
+                  >
+                    {/* Upper Metadata Row */}
+                    <div className="flex flex-wrap items-start justify-between gap-3 pb-4 mb-4 border-b border-white/5">
+                      <div className="flex items-center gap-3">
+                        <span 
+                          className="text-xs font-bold px-2.5 py-0.5 rounded-full"
+                          style={{ 
+                            background: 'rgba(233,30,140,0.1)', 
+                            border: '1px solid rgba(233,30,140,0.2)',
+                            color: '#E91E8C'
+                          }}
+                        >
+                          {item.category}
+                        </span>
+                        <span className="font-display font-bold text-sm text-white">
+                          {item.name}
+                        </span>
+                        <span className="text-xs text-yellow-500 font-bold">
+                          {'★'.repeat(item.rating)}{'☆'.repeat(5 - item.rating)}
+                        </span>
+                      </div>
+                      
+                      <div className="flex items-center gap-3 text-xs text-white/40">
+                        <span>{item.created_at}</span>
+                        <button
+                          onClick={() => handleDelete(item.id)}
+                          className="p-1 text-white/30 hover:text-red-400 rounded transition-colors"
+                          title="Delete log"
+                        >
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Grid details (Phone, Server, Table, Date, Time) */}
+                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-4 bg-black/25 p-3.5 rounded-xl border border-white/5">
+                      {/* Phone */}
+                      <div className="flex items-start gap-2">
+                        <Phone size={13} className="text-[#D4AF37] mt-0.5 shrink-0" />
+                        <div>
+                          <p className="text-[10px] text-white/40 uppercase font-semibold">Phone</p>
+                          <p className="text-xs font-medium text-white">{item.phone}</p>
+                        </div>
+                      </div>
+                      
+                      {/* Server */}
+                      <div className="flex items-start gap-2">
+                        <User size={13} className="text-[#D4AF37] mt-0.5 shrink-0" />
+                        <div>
+                          <p className="text-[10px] text-white/40 uppercase font-semibold">Server Info</p>
+                          <p className="text-xs font-medium text-white">{item.server}</p>
+                        </div>
+                      </div>
+
+                      {/* Table */}
+                      <div className="flex items-start gap-2">
+                        <Hash size={13} className="text-[#D4AF37] mt-0.5 shrink-0" />
+                        <div>
+                          <p className="text-[10px] text-white/40 uppercase font-semibold">Table #</p>
+                          <p className="text-xs font-medium text-white">{item.table}</p>
+                        </div>
+                      </div>
+
+                      {/* Date */}
+                      <div className="flex items-start gap-2">
+                        <Calendar size={13} className="text-[#D4AF37] mt-0.5 shrink-0" />
+                        <div>
+                          <p className="text-[10px] text-white/40 uppercase font-semibold">Visit Date</p>
+                          <p className="text-xs font-medium text-white">{item.date}</p>
+                        </div>
+                      </div>
+
+                      {/* Time */}
+                      <div className="flex items-start gap-2 col-span-2 sm:col-span-1">
+                        <Clock size={13} className="text-[#D4AF37] mt-0.5 shrink-0" />
+                        <div>
+                          <p className="text-[10px] text-white/40 uppercase font-semibold">Visit Time</p>
+                          <p className="text-xs font-medium text-white">{item.time}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Complaint Comments */}
+                    <div>
+                      <p className="text-[10px] text-white/40 uppercase font-semibold mb-1">Customer Comments</p>
+                      <p className="text-sm leading-relaxed text-white/95 whitespace-pre-wrap">
+                        {item.comments}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* TAB Content: Analytics */}
+        {activeAdminTab === 'Analytics' && (
+          <div className="space-y-6 animate-fade-in">
+            {/* Empty State */}
+            <div 
+              className="text-center py-12 px-4 rounded-2xl border border-dashed"
+              style={{ background: '#141414', borderColor: 'rgba(233,30,140,0.15)' }}
+            >
+              <p className="text-3xl mb-3">📊</p>
+              <h3 className="font-semibold text-sm text-white">Analytics coming soon</h3>
+              <p className="text-xs text-white/40 mt-1 max-w-sm mx-auto">
+                Analytics coming soon. Click data will appear here once tracking is enabled.
+              </p>
+            </div>
+
+            {/* Placeholders for Tracked Channels */}
+            <div>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[#D4AF37] mb-4">
+                Tracked Channels Preview
+              </h3>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {/* Menu Views */}
+                <div 
+                  className="p-5 rounded-2xl border" 
+                  style={{ background: '#161616', borderColor: 'rgba(255,255,255,0.06)' }}
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="text-xs text-white/60">Menu Views</span>
+                    <span className="text-xs font-medium text-green-400 bg-green-500/10 px-2 py-0.5 rounded-full">+18%</span>
+                  </div>
+                  <p className="text-2xl font-bold text-white">1,420</p>
+                  <p className="text-[10px] text-white/40 mt-1">Total page load events</p>
+                </div>
+
+                {/* Uber Eats Clicks */}
+                <div 
+                  className="p-5 rounded-2xl border" 
+                  style={{ background: '#161616', borderColor: 'rgba(255,255,255,0.06)' }}
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="text-xs text-white/60">Uber Eats Clicks</span>
+                    <span className="text-xs font-medium text-green-400 bg-green-500/10 px-2 py-0.5 rounded-full">+5%</span>
+                  </div>
+                  <p className="text-2xl font-bold text-white">284</p>
+                  <p className="text-[10px] text-white/40 mt-1">Clicks on Uber Eats links</p>
+                </div>
+
+                {/* WhatsApp Clicks */}
+                <div 
+                  className="p-5 rounded-2xl border" 
+                  style={{ background: '#161616', borderColor: 'rgba(255,255,255,0.06)' }}
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="text-xs text-white/60">WhatsApp Clicks</span>
+                    <span className="text-xs font-medium text-green-400 bg-green-500/10 px-2 py-0.5 rounded-full">+24%</span>
+                  </div>
+                  <p className="text-2xl font-bold text-white">412</p>
+                  <p className="text-[10px] text-white/40 mt-1">Clicks on order/chat links</p>
+                </div>
+
+                {/* Instagram Clicks */}
+                <div 
+                  className="p-5 rounded-2xl border" 
+                  style={{ background: '#161616', borderColor: 'rgba(255,255,255,0.06)' }}
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="text-xs text-white/60">Instagram Clicks</span>
+                    <span className="text-xs font-medium text-pink-400 bg-pink-500/10 px-2 py-0.5 rounded-full">+12%</span>
+                  </div>
+                  <p className="text-2xl font-bold text-white">678</p>
+                  <p className="text-[10px] text-white/40 mt-1">Clicks to official profile</p>
+                </div>
+
+                {/* Google Reviews Clicks */}
+                <div 
+                  className="p-5 rounded-2xl border" 
+                  style={{ background: '#161616', borderColor: 'rgba(255,255,255,0.06)' }}
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="text-xs text-white/60">Google Reviews Clicks</span>
+                    <span className="text-xs font-medium text-green-400 bg-green-500/10 px-2 py-0.5 rounded-full">+35%</span>
+                  </div>
+                  <p className="text-2xl font-bold text-white">345</p>
+                  <p className="text-[10px] text-white/40 mt-1">Clicks on write-review button</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
     </PageLayout>
   )
