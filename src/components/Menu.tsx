@@ -326,7 +326,7 @@ function MeatSelector() {
   const [selected, setSelected] = useState<string>('Select meat option')
 
   return (
-    <div className="relative mt-2">
+    <div className={`relative mt-2 ${open ? 'z-30' : ''}`}>
       <button
         onClick={() => setOpen(o => !o)}
         className="flex items-center justify-between w-full text-xs px-3 py-1.5 rounded-lg transition-colors"
