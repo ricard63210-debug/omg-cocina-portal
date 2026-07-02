@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import PageLayout from '../components/PageLayout'
 import { supabase } from '../lib/supabase'
-import { Eye, EyeOff, Search, Trash2, Calendar, User, Hash, Phone, Clock } from 'lucide-react'
+import { Eye, EyeOff, Search, Trash2, Calendar, User, Hash, Phone, Clock, X } from 'lucide-react'
 
 interface OrderItem {
   name: string
@@ -140,6 +140,7 @@ export default function AdminPage() {
   const [ordersLoading, setOrdersLoading] = useState(false)
   const [ordersError, setOrdersError] = useState('')
   const [showCompletedOrders, setShowCompletedOrders] = useState(false)
+  const [readyOrderNotification, setReadyOrderNotification] = useState<Order | null>(null)
 
   // Filters & Search
   const [search, setSearch] = useState('')
@@ -242,9 +243,35 @@ export default function AdminPage() {
       setOrders(prev =>
         prev.map(o => (o.id === orderId ? { ...o, status: nextStatus } : o))
       )
+
+      if (nextStatus === 'ready') {
+        const orderObj = orders.find(o => o.id === orderId)
+        if (orderObj) {
+          setReadyOrderNotification({ ...orderObj, status: 'ready' })
+        }
+      }
     } catch (err: any) {
       console.error('Error cycling status:', err)
       alert(`Status update failed: ${err.message}`)
+    }
+  }
+
+  const completeOrderDirectly = async (orderId: string) => {
+    try {
+      const { error } = await supabase
+        .from('omg_orders')
+        .update({ status: 'completed' })
+        .eq('id', orderId)
+
+      if (error) throw error
+
+      setOrders(prev =>
+        prev.map(o => (o.id === orderId ? { ...o, status: 'completed' } : o))
+      )
+      setReadyOrderNotification(null)
+    } catch (err: any) {
+      console.error('Error completing order:', err)
+      alert(`Failed to complete order: ${err.message}`)
     }
   }
 
@@ -865,6 +892,114 @@ export default function AdminPage() {
                   <p className="text-2xl font-bold text-white">345</p>
                   <p className="text-[10px] text-white/40 mt-1">Clicks on write-review button</p>
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Order Ready Notification Modal */}
+        {readyOrderNotification && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur-6px' }}
+          >
+            <div
+              className="w-full max-w-sm p-6 rounded-2xl border text-center relative animate-scale-up"
+              style={{
+                background: '#121212',
+                borderColor: '#E91E8C',
+                boxShadow: '0 15px 40px rgba(233, 30, 140, 0.25)',
+              }}
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setReadyOrderNotification(null)}
+                className="absolute top-3.5 right-3.5 text-white/40 hover:text-white"
+              >
+                <X size={18} />
+              </button>
+
+              <span className="text-4xl block mb-2 animate-bounce">🔔</span>
+              <h3 className="font-display font-bold text-lg text-white mb-4">Order Ready!</h3>
+
+              {/* Large stand info / type details */}
+              <div className="py-4 px-3 rounded-xl bg-black/40 border border-white/5 mb-5 space-y-1">
+                {readyOrderNotification.order_type === 'take_out' ? (
+                  <>
+                    <p className="text-[10px] uppercase font-bold tracking-wider text-white/40">Take Out Customer</p>
+                    <p className="text-2xl font-bold text-[#FF6BB5] truncate">
+                      {readyOrderNotification.customer_name || 'Guest'}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-[10px] uppercase font-bold tracking-wider text-white/40">Dine In Stand</p>
+                    <p className="text-3xl font-display font-bold text-[#D4AF37]">
+                      Stand {readyOrderNotification.stand_number || '1'}
+                    </p>
+                    <p className="text-xs font-semibold text-white/80 mt-1">
+                      👤 {readyOrderNotification.customer_name || 'Guest'}
+                    </p>
+                  </>
+                )}
+              </div>
+
+              {/* Action Messages & Buttons */}
+              <div className="space-y-4 mb-6">
+                {readyOrderNotification.order_type === 'take_out' ? (
+                  readyOrderNotification.customer_phone ? (
+                    (() => {
+                      const msg = `Hi ${readyOrderNotification.customer_name || 'Guest'}! 🌸 Your order at OMG Cocina is ready! Please pick it up at the counter. Thank you for choosing us — we hope to see you again soon! 😊`
+                      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                                    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+                      const smsUrl = `sms:${readyOrderNotification.customer_phone}${isIOS ? '&' : '?'}body=${encodeURIComponent(msg)}`
+                      
+                      return (
+                        <a
+                          href={smsUrl}
+                          className="w-full py-3 rounded-xl font-bold text-sm bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                        >
+                          📱 Notify Customer via SMS
+                        </a>
+                      )
+                    })()
+                  ) : (
+                    <p className="text-xs text-white/50 leading-relaxed italic">
+                      No phone number provided for SMS notification.
+                    </p>
+                  )
+                ) : (
+                  <div className="p-3.5 rounded-xl border border-dashed border-green-500/30 bg-green-500/5 text-green-400 text-xs font-bold flex items-center justify-center gap-2">
+                    <span>🏃‍♂️ Deliver to Stand {readyOrderNotification.stand_number || '1'}</span>
+                  </div>
+                )}
+
+                {/* Preview order items */}
+                <div className="text-left text-[11px] max-h-24 overflow-y-auto no-scrollbar border border-white/5 bg-black/20 p-2.5 rounded-lg text-white/70">
+                  <span className="font-semibold text-white/50 block mb-1">Items preview:</span>
+                  {readyOrderNotification.items?.map((item, idx) => (
+                    <div key={idx} className="truncate">
+                      {item.quantity}x {item.name} {item.options ? `(${item.options})` : ''}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Complete Order button */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setReadyOrderNotification(null)}
+                  className="flex-1 py-2.5 rounded-xl border text-xs font-semibold text-white/70 hover:bg-white/5 transition-all"
+                  style={{ borderColor: 'rgba(255,255,255,0.15)' }}
+                >
+                  Close
+                </button>
+                <button
+                  onClick={() => completeOrderDirectly(readyOrderNotification.id)}
+                  className="flex-1 py-2.5 rounded-xl text-xs font-bold btn-pink shadow-lg"
+                >
+                  Complete & Archive
+                </button>
               </div>
             </div>
           </div>
