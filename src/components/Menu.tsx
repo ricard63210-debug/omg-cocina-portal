@@ -298,7 +298,7 @@ export default function Menu() {
 
                 {/* Add to Cart Button */}
                 <button
-                  onClick={() => handleAddToCart(item, idx)}
+                  onClick={() => setSelectedItem(item)}
                   className="w-full mt-4 py-2.5 rounded-xl text-xs font-bold btn-pink flex items-center justify-center gap-1.5 transition-all hover:scale-[1.02] active:scale-[0.98]"
                 >
                   🛒 Add to Cart
