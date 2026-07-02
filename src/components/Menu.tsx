@@ -3,11 +3,128 @@ import { MENU_CATEGORIES, MEAT_OPTIONS } from './menuData'
 import type { MenuItem } from './menuData'
 import { SectionDivider } from './RoseDecor'
 import { AlertCircle, ChevronDown, X } from 'lucide-react'
+import { supabase } from '../lib/supabase'
+
+export interface CartItem {
+  name: string
+  price: number
+  priceString: string
+  quantity: number
+  option?: string
+  image?: string
+}
+
+// Utility to parse prices from strings (e.g. "$15.00" -> 15.0)
+const parsePrice = (priceStr: string): number => {
+  return parseFloat(priceStr.replace(/[^0-9.]/g, '')) || 0
+}
 
 export default function Menu() {
   const [activeTab, setActiveTab] = useState('appetizers')
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null)
   const [openDropdownIdx, setOpenDropdownIdx] = useState<number | null>(null)
+
+  // Meat selector options tracking
+  const [selectedMeats, setSelectedMeats] = useState<Record<number, string>>({})
+
+  // Cart and checkout states
+  const [cart, setCart] = useState<CartItem[]>([])
+  const [isCartOpen, setIsCartOpen] = useState(false)
+  const [tableNumber, setTableNumber] = useState('')
+  const [showTablePrompt, setShowTablePrompt] = useState(false)
+  const [showConfirmation, setShowConfirmation] = useState(false)
+  const [orderNotes, setOrderNotes] = useState('')
+  const [isSubmittingOrder, setIsSubmittingOrder] = useState(false)
+
+  const handleAddToCart = (item: MenuItem, idx: number) => {
+    if (item.meatChoice && (!selectedMeats[idx] || selectedMeats[idx] === 'Select meat option')) {
+      alert('Please select a meat option first! 🥩')
+      setOpenDropdownIdx(idx)
+      return
+    }
+
+    const selectedOption = item.meatChoice ? selectedMeats[idx] : undefined
+    const priceNum = parsePrice(item.price)
+
+    setCart(prevCart => {
+      const existingIdx = prevCart.findIndex(
+        ci => ci.name === item.name && ci.option === selectedOption
+      )
+
+      if (existingIdx > -1) {
+        const newCart = [...prevCart]
+        newCart[existingIdx].quantity += 1
+        return newCart
+      } else {
+        return [
+          ...prevCart,
+          {
+            name: item.name,
+            price: priceNum,
+            priceString: item.price,
+            quantity: 1,
+            option: selectedOption,
+            image: item.image,
+          },
+        ]
+      }
+    })
+
+    // Reset meat selector after adding
+    if (item.meatChoice) {
+      setSelectedMeats(prev => {
+        const next = { ...prev }
+        delete next[idx]
+        return next
+      })
+    }
+  }
+
+  const updateQuantity = (index: number, delta: number) => {
+    setCart(prevCart => {
+      const newCart = [...prevCart]
+      newCart[index].quantity += delta
+      if (newCart[index].quantity <= 0) {
+        newCart.splice(index, 1)
+      }
+      return newCart
+    })
+  }
+
+  const handlePlaceOrder = async () => {
+    if (!tableNumber.trim()) return
+
+    setIsSubmittingOrder(true)
+    try {
+      const orderItems = cart.map(item => ({
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+        options: item.option || null
+      }))
+
+      const { error } = await supabase.from('omg_orders').insert({
+        table_number: tableNumber.trim(),
+        items: orderItems,
+        subtotal: cartSubtotal,
+        status: 'pending',
+        customer_note: orderNotes.trim() || null
+      })
+
+      if (error) throw error
+
+      setShowTablePrompt(false)
+      setShowConfirmation(true)
+    } catch (err: any) {
+      console.error('Error placing order:', err)
+      alert(`Failed to place order: ${err.message || 'Connection error'}`)
+    } finally {
+      setIsSubmittingOrder(false)
+    }
+  }
+
+  const cartItemCount = cart.reduce((acc, item) => acc + item.quantity, 0)
+  const cartSubtotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0)
 
   const activeCategory = MENU_CATEGORIES.find(c => c.id === activeTab)
 
@@ -148,6 +265,8 @@ export default function Menu() {
                   <MeatSelector
                     isOpen={isDropdownOpen}
                     onToggle={() => setOpenDropdownIdx(isDropdownOpen ? null : idx)}
+                    selected={selectedMeats[idx] || 'Select meat option'}
+                    onSelect={(meat) => setSelectedMeats(prev => ({ ...prev, [idx]: meat }))}
                   />
                 )}
 
@@ -169,6 +288,14 @@ export default function Menu() {
                     ))}
                   </div>
                 )}
+
+                {/* Add to Cart Button */}
+                <button
+                  onClick={() => handleAddToCart(item, idx)}
+                  className="w-full mt-4 py-2.5 rounded-xl text-xs font-bold btn-pink flex items-center justify-center gap-1.5 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  🛒 Add to Cart
+                </button>
               </div>
             )})}
           </div>
@@ -338,14 +465,242 @@ export default function Menu() {
             </div>
           </div>
         )}
+        {/* Floating Cart Button */}
+        {cartItemCount > 0 && (
+          <button
+            onClick={() => setIsCartOpen(true)}
+            className="fixed bottom-6 right-6 z-40 bg-[#E91E8C] text-white p-4 rounded-full shadow-2xl flex items-center justify-center hover:scale-105 transition-transform border border-white/20 animate-scale-up"
+            style={{ boxShadow: '0 8px 30px rgba(233,30,140,0.4)' }}
+            aria-label="Open Shopping Cart"
+          >
+            <div className="relative">
+              <span className="text-xl">🛒</span>
+              <span className="absolute -top-3.5 -right-3.5 bg-[#D4AF37] text-[#0A0A0A] font-bold text-[10px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-[#E91E8C]">
+                {cartItemCount}
+              </span>
+            </div>
+          </button>
+        )}
+
+        {/* Cart Drawer */}
+        {isCartOpen && (
+          <div
+            className="fixed inset-0 z-50 flex justify-end"
+            style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
+            onClick={() => setIsCartOpen(false)}
+          >
+            <div
+              className="w-full max-w-md h-full flex flex-col shadow-2xl relative"
+              style={{
+                background: '#121212',
+                borderLeft: '1px solid rgba(233,30,140,0.15)',
+              }}
+              onClick={e => e.stopPropagation()}
+            >
+              {/* Drawer Header */}
+              <div className="p-4 border-b border-white/5 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">🛒</span>
+                  <h3 className="font-display font-bold text-base text-white">Your Cart</h3>
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-white/5 text-white/60">
+                    {cartItemCount} items
+                  </span>
+                </div>
+                <button
+                  onClick={() => setIsCartOpen(false)}
+                  className="p-1 rounded-full text-white/50 hover:text-white hover:bg-white/5 transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              {/* Drawer Content / Items list */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar">
+                {cart.length === 0 ? (
+                  <div className="text-center py-20 text-white/40">
+                    <p className="text-4xl mb-3">📭</p>
+                    <p className="text-sm font-semibold">Your cart is empty</p>
+                    <p className="text-xs mt-1">Add some delicious items from our menu!</p>
+                  </div>
+                ) : (
+                  cart.map((item, cidx) => (
+                    <div
+                      key={cidx}
+                      className="flex items-center gap-3 p-3 rounded-xl border"
+                      style={{ background: '#161616', borderColor: 'rgba(255,255,255,0.04)' }}
+                    >
+                      {item.image && (
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-12 h-12 rounded-lg object-cover"
+                        />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-xs text-white truncate">{item.name}</h4>
+                        {item.option && (
+                          <p className="text-[10px] text-[#FF6BB5] font-medium mt-0.5">
+                            🥩 {item.option}
+                          </p>
+                        )}
+                        <p className="text-xs text-[#D4AF37] font-bold mt-1">
+                          {item.priceString}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => updateQuantity(cidx, -1)}
+                          className="w-6 h-6 rounded-md bg-white/5 hover:bg-white/10 text-white flex items-center justify-center text-xs transition-colors"
+                        >
+                          -
+                        </button>
+                        <span className="text-xs font-semibold w-4 text-center text-white">
+                          {item.quantity}
+                        </span>
+                        <button
+                          onClick={() => updateQuantity(cidx, 1)}
+                          className="w-6 h-6 rounded-md bg-white/5 hover:bg-white/10 text-white flex items-center justify-center text-xs transition-colors"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              {/* Drawer Footer */}
+              {cart.length > 0 && (
+                <div className="p-4 border-t border-white/5 bg-[#141414] space-y-4">
+                  {/* Notes Input */}
+                  <div>
+                    <label className="text-[10px] uppercase font-bold text-white/40 tracking-wider block mb-1">
+                      Add notes / Special requests
+                    </label>
+                    <textarea
+                      placeholder="E.g. No onions, sauce on the side..."
+                      value={orderNotes}
+                      onChange={e => setOrderNotes(e.target.value)}
+                      className="form-input w-full text-xs py-2 px-3 h-14 resize-none"
+                      style={{ background: '#0A0A0A' }}
+                    />
+                  </div>
+
+                  {/* Subtotal */}
+                  <div className="flex justify-between items-center text-sm font-semibold">
+                    <span className="text-white/60">Subtotal</span>
+                    <span className="text-base text-[#D4AF37]">${cartSubtotal.toFixed(2)}</span>
+                  </div>
+
+                  {/* Place Order Button */}
+                  <button
+                    onClick={() => setShowTablePrompt(true)}
+                    className="w-full py-3 rounded-xl text-sm font-bold btn-pink flex items-center justify-center gap-2 shadow-lg"
+                  >
+                    🚀 Place Order
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Table Number Prompt Modal */}
+        {showTablePrompt && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur-6px' }}
+          >
+            <div
+              className="w-full max-w-sm p-6 rounded-2xl border text-center relative animate-scale-up"
+              style={{
+                background: '#121212',
+                borderColor: 'rgba(233,30,140,0.25)',
+                boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+              }}
+            >
+              <h3 className="font-display font-bold text-lg text-white mb-1">Table Number</h3>
+              <p className="text-xs text-white/50 mb-4">Please enter your table number to complete the order.</p>
+
+              <input
+                type="text"
+                placeholder="E.g. Table 5, Bar 2..."
+                value={tableNumber}
+                onChange={e => setTableNumber(e.target.value)}
+                className="form-input w-full text-center text-sm py-2.5 mb-4 focus:ring-1 focus:ring-[#E91E8C]"
+                autoFocus
+              />
+
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowTablePrompt(false)}
+                  className="flex-1 py-2.5 rounded-xl border text-xs font-semibold text-white/70 hover:bg-white/5 transition-all"
+                  style={{ borderColor: 'rgba(255,255,255,0.15)' }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handlePlaceOrder}
+                  disabled={!tableNumber.trim() || isSubmittingOrder}
+                  className="flex-1 py-2.5 rounded-xl text-xs font-bold btn-pink disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmittingOrder ? 'Submitting...' : 'Confirm Order'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Confirmation Modal */}
+        {showConfirmation && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur-6px' }}
+          >
+            <div
+              className="w-full max-w-sm p-8 rounded-2xl border text-center animate-scale-up"
+              style={{
+                background: '#121212',
+                borderColor: 'rgba(233,30,140,0.3)',
+                boxShadow: '0 15px 40px rgba(233,30,140,0.15)',
+              }}
+            >
+              <span className="text-5xl block mb-4 animate-bounce">🌸</span>
+              <h3 className="font-display font-bold text-xl text-[#FF6BB5] mb-2">Order Received!</h3>
+              <p className="text-sm text-white/80 leading-relaxed mb-6">
+                Your order has been received! 🌸 Our kitchen staff is preparing your meal.
+              </p>
+              <button
+                onClick={() => {
+                  setShowConfirmation(false)
+                  setCart([])
+                  setTableNumber('')
+                  setOrderNotes('')
+                  setIsCartOpen(false)
+                }}
+                className="w-full py-3 rounded-xl text-xs font-bold btn-pink"
+              >
+                Enjoy your meal!
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   )
 }
 
-function MeatSelector({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }) {
-  const [selected, setSelected] = useState<string>('Select meat option')
-
+function MeatSelector({ 
+  isOpen, 
+  onToggle, 
+  selected, 
+  onSelect 
+}: { 
+  isOpen: boolean; 
+  onToggle: () => void; 
+  selected: string; 
+  onSelect: (meat: string) => void;
+}) {
   return (
     <div className="relative mt-2">
       <button
@@ -377,7 +732,7 @@ function MeatSelector({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => v
               style={{ color: 'rgba(245,245,245,0.8)' }}
               onMouseEnter={e => (e.currentTarget.style.background = 'rgba(233,30,140,0.12)')}
               onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-              onClick={() => { setSelected(opt.label); onToggle() }}
+              onClick={() => { onSelect(opt.label); onToggle() }}
             >
               {opt.label}
             </li>

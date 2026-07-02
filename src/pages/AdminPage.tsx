@@ -3,6 +3,55 @@ import PageLayout from '../components/PageLayout'
 import { supabase } from '../lib/supabase'
 import { Eye, EyeOff, Search, Trash2, Calendar, User, Hash, Phone, Clock } from 'lucide-react'
 
+interface OrderItem {
+  name: string
+  quantity: number
+  price: number
+  options?: string | null
+}
+
+interface Order {
+  id: string
+  created_at: string
+  table_number: string
+  items: OrderItem[]
+  subtotal: number
+  status: 'pending' | 'preparing' | 'ready' | 'completed'
+  customer_note?: string | null
+}
+
+function playNotificationSound() {
+  try {
+    const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)()
+    
+    // Play first tone (higher pitch)
+    const osc1 = audioCtx.createOscillator()
+    const gain1 = audioCtx.createGain()
+    osc1.connect(gain1)
+    gain1.connect(audioCtx.destination)
+    osc1.type = 'sine'
+    osc1.frequency.setValueAtTime(880, audioCtx.currentTime) // A5
+    gain1.gain.setValueAtTime(0.15, audioCtx.currentTime)
+    gain1.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3)
+    osc1.start(audioCtx.currentTime)
+    osc1.stop(audioCtx.currentTime + 0.3)
+    
+    // Play second tone (lower pitch) after a short delay
+    const osc2 = audioCtx.createOscillator()
+    const gain2 = audioCtx.createGain()
+    osc2.connect(gain2)
+    gain2.connect(audioCtx.destination)
+    osc2.type = 'sine'
+    osc2.frequency.setValueAtTime(587.33, audioCtx.currentTime + 0.15) // D5
+    gain2.gain.setValueAtTime(0.15, audioCtx.currentTime + 0.15)
+    gain2.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.45)
+    osc2.start(audioCtx.currentTime + 0.15)
+    osc2.stop(audioCtx.currentTime + 0.45)
+  } catch (err) {
+    console.error('Audio synthesis failed:', err)
+  }
+}
+
 interface FeedbackRow {
   id: number
   created_at?: string
@@ -82,7 +131,11 @@ export default function AdminPage() {
   const [feedbacks, setFeedbacks] = useState<ParsedFeedback[]>([])
   const [loading, setLoading] = useState(false)
   const [dbError, setDbError] = useState('')
-  const [activeAdminTab, setActiveAdminTab] = useState<'Órdenes' | 'Feedback' | 'Analytics'>('Órdenes')
+  const [activeAdminTab, setActiveAdminTab] = useState<'Orders' | 'Feedback' | 'Analytics'>('Orders')
+  const [orders, setOrders] = useState<Order[]>([])
+  const [ordersLoading, setOrdersLoading] = useState(false)
+  const [ordersError, setOrdersError] = useState('')
+  const [showCompletedOrders, setShowCompletedOrders] = useState(false)
 
   // Filters & Search
   const [search, setSearch] = useState('')
@@ -140,6 +193,89 @@ export default function AdminPage() {
       setLoading(false)
     }
   }
+
+  const fetchOrders = async () => {
+    setOrdersLoading(true)
+    setOrdersError('')
+    try {
+      const { data, error } = await supabase
+        .from('omg_orders')
+        .select('*')
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      if (data) {
+        setOrders(data as Order[])
+      }
+    } catch (err: any) {
+      console.error('Error fetching orders:', err)
+      setOrdersError(err.message || 'Failed to fetch orders.')
+    } finally {
+      setOrdersLoading(false)
+    }
+  }
+
+  const cycleOrderStatus = async (orderId: string, currentStatus: string) => {
+    let nextStatus: 'pending' | 'preparing' | 'ready' | 'completed' = 'pending'
+    if (currentStatus === 'pending') {
+      nextStatus = 'preparing'
+    } else if (currentStatus === 'preparing') {
+      nextStatus = 'ready'
+    } else if (currentStatus === 'ready') {
+      nextStatus = 'completed'
+    } else {
+      nextStatus = 'pending'
+    }
+
+    try {
+      const { error } = await supabase
+        .from('omg_orders')
+        .update({ status: nextStatus })
+        .eq('id', orderId)
+
+      if (error) throw error
+
+      setOrders(prev =>
+        prev.map(o => (o.id === orderId ? { ...o, status: nextStatus } : o))
+      )
+    } catch (err: any) {
+      console.error('Error cycling status:', err)
+      alert(`Status update failed: ${err.message}`)
+    }
+  }
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchOrders()
+
+      const channel = supabase
+        .channel('realtime-orders')
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'omg_orders' },
+          (payload) => {
+            console.log('Realtime Order Insert:', payload.new)
+            const newOrder = payload.new as Order
+            setOrders(prev => [newOrder, ...prev])
+            playNotificationSound()
+          }
+        )
+        .on(
+          'postgres_changes',
+          { event: 'UPDATE', schema: 'public', table: 'omg_orders' },
+          (payload) => {
+            console.log('Realtime Order Update:', payload.new)
+            const updated = payload.new as Order
+            setOrders(prev => prev.map(o => (o.id === updated.id ? updated : o)))
+          }
+        )
+        .subscribe()
+
+      return () => {
+        supabase.removeChannel(channel)
+      }
+    }
+  }, [isAuthenticated])
 
   const handleDelete = async (id: number) => {
     if (!window.confirm('Are you sure you want to delete this complaint? This action cannot be undone.')) {
@@ -260,7 +396,7 @@ export default function AdminPage() {
 
         {/* Admin Tabs */}
         <div className="flex gap-2 border-b border-white/10 pb-px mb-8 overflow-x-auto no-scrollbar">
-          {(['Órdenes', 'Feedback', 'Analytics'] as const).map(tab => (
+          {(['Orders', 'Feedback', 'Analytics'] as const).map(tab => (
             <button
               key={tab}
               onClick={() => setActiveAdminTab(tab)}
@@ -270,136 +406,158 @@ export default function AdminPage() {
                   : 'border-transparent text-white/50 hover:text-white/80'
               }`}
             >
-              {tab === 'Órdenes' ? '📋 ' : tab === 'Feedback' ? '💬 ' : '📈 '}
+              {tab === 'Orders' ? '📋 ' : tab === 'Feedback' ? '💬 ' : '📈 '}
               {tab}
             </button>
           ))}
         </div>
 
         {/* TAB Content: Orders */}
-        {activeAdminTab === 'Órdenes' && (
+        {activeAdminTab === 'Orders' && (
           <div className="space-y-6">
-            {/* Empty State */}
-            <div 
-              className="text-center py-12 px-4 rounded-2xl border border-dashed"
-              style={{ background: '#141414', borderColor: 'rgba(233,30,140,0.15)' }}
-            >
-              <p className="text-3xl mb-3">🛒</p>
-              <h3 className="font-semibold text-sm text-white">No orders yet</h3>
-              <p className="text-xs text-white/40 mt-1 max-w-sm mx-auto">
-                No orders yet. Orders will appear here in real time once the cart and payment system is connected.
-              </p>
-            </div>
+            {/* Realtime Controls */}
+            <div className="flex flex-wrap items-center justify-between gap-4 bg-[#141414] p-4 rounded-xl border border-white/5">
+              <div className="flex items-center gap-2.5">
+                <input
+                  type="checkbox"
+                  id="showCompleted"
+                  checked={showCompletedOrders}
+                  onChange={e => setShowCompletedOrders(e.target.checked)}
+                  className="rounded border-white/20 text-[#E91E8C] focus:ring-0 focus:ring-offset-0 bg-[#0A0A0A] w-4 h-4 cursor-pointer"
+                />
+                <label htmlFor="showCompleted" className="text-xs text-white/70 select-none cursor-pointer">
+                  Show Completed Orders ({orders.filter(o => o.status === 'completed').length})
+                </label>
+              </div>
 
-            {/* Mock / Placeholder Orders */}
-            <div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-[#D4AF37] mb-4">
-                Live Preview: Incoming Orders Format
-              </h3>
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {/* Pending Order */}
-                <div 
-                  className="rounded-2xl p-5 border transition-all duration-300 hover:border-[#E91E8C]/20"
-                  style={{ background: '#161616', borderColor: 'rgba(255,255,255,0.06)' }}
-                >
-                  <div className="flex justify-between items-start gap-3 pb-3 mb-3 border-b border-white/5">
-                    <div>
-                      <h4 className="font-display font-bold text-sm text-white">Order #1204</h4>
-                      <p className="text-[10px] text-white/40 mt-0.5">Table 4 • 2 mins ago</p>
-                    </div>
-                    <span 
-                      className="text-[10px] font-bold px-2 py-0.5 rounded-full border bg-yellow-500/10 border-yellow-500/30 text-yellow-500"
-                    >
-                      ● Pending
-                    </span>
-                  </div>
-                  
-                  <div className="space-y-1.5 mb-4 text-xs text-white/80">
-                    <div className="flex justify-between">
-                      <span>2x Street Taco (Carne Asada)</span>
-                      <span className="text-white/40">$6.00</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>1x Green Chicken Pozole</span>
-                      <span className="text-white/40">$15.00</span>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between items-center pt-3 border-t border-white/5">
-                    <span className="text-[10px] uppercase font-bold text-white/40">Total Amount</span>
-                    <span className="text-sm font-bold text-[#D4AF37]">$21.00</span>
-                  </div>
-                </div>
-
-                {/* Preparing Order */}
-                <div 
-                  className="rounded-2xl p-5 border transition-all duration-300 hover:border-[#E91E8C]/20"
-                  style={{ background: '#161616', borderColor: 'rgba(255,255,255,0.06)' }}
-                >
-                  <div className="flex justify-between items-start gap-3 pb-3 mb-3 border-b border-white/5">
-                    <div>
-                      <h4 className="font-display font-bold text-sm text-white">Order #1203</h4>
-                      <p className="text-[10px] text-white/40 mt-0.5">Table 12 • 8 mins ago</p>
-                    </div>
-                    <span 
-                      className="text-[10px] font-bold px-2 py-0.5 rounded-full border bg-[#E91E8C]/10 border-[#E91E8C]/30 text-[#FF6BB5]"
-                    >
-                      ● Preparing
-                    </span>
-                  </div>
-                  
-                  <div className="space-y-1.5 mb-4 text-xs text-white/80">
-                    <div className="flex justify-between">
-                      <span>1x Arrachera Plate</span>
-                      <span className="text-white/40">$25.00</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>1x Cheese Dip</span>
-                      <span className="text-white/40">$9.50</span>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between items-center pt-3 border-t border-white/5">
-                    <span className="text-[10px] uppercase font-bold text-white/40">Total Amount</span>
-                    <span className="text-sm font-bold text-[#D4AF37]">$34.50</span>
-                  </div>
-                </div>
-
-                {/* Ready Order */}
-                <div 
-                  className="rounded-2xl p-5 border transition-all duration-300 hover:border-[#E91E8C]/20"
-                  style={{ background: '#161616', borderColor: 'rgba(255,255,255,0.06)' }}
-                >
-                  <div className="flex justify-between items-start gap-3 pb-3 mb-3 border-b border-white/5">
-                    <div>
-                      <h4 className="font-display font-bold text-sm text-white">Order #1202</h4>
-                      <p className="text-[10px] text-white/40 mt-0.5">Table 7 • 15 mins ago</p>
-                    </div>
-                    <span 
-                      className="text-[10px] font-bold px-2 py-0.5 rounded-full border bg-green-500/10 border-green-500/30 text-green-400"
-                    >
-                      ● Ready
-                    </span>
-                  </div>
-                  
-                  <div className="space-y-1.5 mb-4 text-xs text-white/80">
-                    <div className="flex justify-between">
-                      <span>1x Salmon Salad</span>
-                      <span className="text-white/40">$21.00</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>1x Guacamole</span>
-                      <span className="text-white/40">$10.50</span>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between items-center pt-3 border-t border-white/5">
-                    <span className="text-[10px] uppercase font-bold text-white/40">Total Amount</span>
-                    <span className="text-sm font-bold text-[#D4AF37]">$31.50</span>
-                  </div>
-                </div>
+              <div className="text-xs text-white/40 flex items-center gap-1.5 font-medium">
+                <span className="flex h-2 w-2 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                </span>
+                Real-time dashboard active
               </div>
             </div>
+
+            {/* Error state */}
+            {ordersError && (
+              <div className="p-4 rounded-xl border text-xs bg-red-950/20 border-red-900 text-red-300">
+                ⚠️ Connection issue: {ordersError}
+              </div>
+            )}
+
+            {/* Loading / Empty State / Orders List */}
+            {ordersLoading && orders.length === 0 ? (
+              <div className="text-center py-16">
+                <div className="inline-block w-8 h-8 rounded-full border-2 border-t-pink animate-spin" />
+                <p className="text-xs text-white/40 mt-3">Connecting to database...</p>
+              </div>
+            ) : orders.filter(o => showCompletedOrders ? true : o.status !== 'completed').length === 0 ? (
+              <div 
+                className="text-center py-12 px-4 rounded-2xl border border-dashed"
+                style={{ background: '#141414', borderColor: 'rgba(233,30,140,0.15)' }}
+              >
+                <p className="text-3xl mb-3">📭</p>
+                <h3 className="font-semibold text-sm text-white">No active orders</h3>
+                <p className="text-xs text-white/40 mt-1 max-w-sm mx-auto">
+                  No orders yet. Orders will appear here in real time once the cart and payment system is connected.
+                </p>
+              </div>
+            ) : (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {orders
+                  .filter(o => showCompletedOrders ? true : o.status !== 'completed')
+                  .map(order => {
+                    let badgeClass = ''
+                    let statusLabel = ''
+                    if (order.status === 'pending') {
+                      badgeClass = 'bg-yellow-500/10 border-yellow-500/30 text-yellow-500'
+                      statusLabel = 'Pending'
+                    } else if (order.status === 'preparing') {
+                      badgeClass = 'bg-[#E91E8C]/10 border-[#E91E8C]/30 text-[#FF6BB5]'
+                      statusLabel = 'Preparing'
+                    } else if (order.status === 'ready') {
+                      badgeClass = 'bg-green-500/10 border-green-500/30 text-green-400'
+                      statusLabel = 'Ready'
+                    } else {
+                      badgeClass = 'bg-white/5 border-white/10 text-white/40'
+                      statusLabel = 'Completed'
+                    }
+
+                    const formattedTime = (() => {
+                      try {
+                        return new Date(order.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                      } catch {
+                        return 'N/A'
+                      }
+                    })()
+
+                    return (
+                      <div 
+                        key={order.id}
+                        className="rounded-2xl p-5 border transition-all duration-300 hover:border-[#E91E8C]/20 flex flex-col justify-between"
+                        style={{ background: '#161616', borderColor: 'rgba(255,255,255,0.06)' }}
+                      >
+                        <div>
+                          {/* Card Header */}
+                          <div className="flex justify-between items-start gap-3 pb-3 mb-3 border-b border-white/5">
+                            <div>
+                              <h4 className="font-display font-bold text-sm text-white">
+                                {order.table_number}
+                              </h4>
+                              <p className="text-[10px] text-white/40 mt-0.5">
+                                {formattedTime}
+                              </p>
+                            </div>
+                            <button
+                              onClick={() => cycleOrderStatus(order.id, order.status)}
+                              className={`text-[10px] font-bold px-2.5 py-1 rounded-full border transition-all cursor-pointer select-none active:scale-95 ${badgeClass}`}
+                              title="Click to cycle status"
+                            >
+                              ● {statusLabel}
+                            </button>
+                          </div>
+                          
+                          {/* Order Items */}
+                          <div className="space-y-2 mb-4 text-xs text-white/90">
+                            {order.items?.map((oitem, oidx) => (
+                              <div key={oidx} className="flex justify-between items-start gap-2">
+                                <div>
+                                  <span>{oitem.quantity}x {oitem.name}</span>
+                                  {oitem.options && (
+                                    <p className="text-[9px] text-[#FF6BB5] font-medium mt-0.5">
+                                      🥩 {oitem.options}
+                                    </p>
+                                  )}
+                                </div>
+                                <span className="text-white/40 shrink-0">
+                                  ${(oitem.price * oitem.quantity).toFixed(2)}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Customer note */}
+                          {order.customer_note && (
+                            <div className="mb-4 p-2.5 rounded-lg bg-black/35 border border-white/5 text-[10px] text-white/60 leading-relaxed">
+                              <span className="font-bold text-white/80 block mb-0.5">Note:</span>
+                              {order.customer_note}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Total price */}
+                        <div className="flex justify-between items-center pt-3 border-t border-white/5 mt-auto">
+                          <span className="text-[10px] uppercase font-bold text-white/40">Total</span>
+                          <span className="text-sm font-bold text-[#D4AF37]">
+                            ${Number(order.subtotal).toFixed(2)}
+                          </span>
+                        </div>
+                      </div>
+                    )
+                  })}
+              </div>
+            )}
           </div>
         )}
 
