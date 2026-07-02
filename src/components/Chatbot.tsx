@@ -189,7 +189,7 @@ export default function Chatbot({ externalOpen, onExternalClose }: ChatbotProps)
       {open && (
         <div
           id="chatbot-modal"
-          className="fixed bottom-24 right-4 z-50 flex flex-col rounded-2xl overflow-hidden shadow-2xl"
+          className="fixed bottom-[160px] right-6 z-50 flex flex-col rounded-2xl overflow-hidden shadow-2xl"
           style={{
             width: 'min(380px, calc(100vw - 2rem))',
             height: '500px',

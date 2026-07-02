@@ -214,7 +214,7 @@ h1, h2, h3 {
 /* Chatbot */
 .chat-bubble {
   position: fixed;
-  bottom: 1.5rem;
+  bottom: 90px;
   right: 1.5rem;
   z-index: 1000;
   width: 60px;

@@ -223,9 +223,12 @@ export default function Menu() {
                 )}
 
                 {/* Header row */}
-                <div className="flex items-start justify-between gap-2 mb-1.5">
+                <div 
+                  onClick={() => setSelectedItem(item)}
+                  className="flex items-start justify-between gap-2 mb-1.5 cursor-pointer group/title"
+                >
                   <h3
-                    className="font-display font-semibold text-base leading-snug"
+                    className="font-display font-semibold text-base leading-snug group-hover/title:text-[#FF6BB5] transition-colors"
                     style={{ color: '#F5F5F5' }}
                   >
                     {item.name}
@@ -240,7 +243,11 @@ export default function Menu() {
 
                 {/* Description */}
                 {item.description && (
-                  <p className="text-xs leading-relaxed mb-2" style={{ color: 'rgba(245,245,245,0.55)' }}>
+                  <p 
+                    onClick={() => setSelectedItem(item)}
+                    className="text-xs leading-relaxed mb-2 cursor-pointer hover:text-white/80 transition-colors"
+                    style={{ color: 'rgba(245,245,245,0.55)' }}
+                  >
                     {item.description}
                   </p>
                 )}
@@ -459,6 +466,41 @@ export default function Menu() {
                         </div>
                       </div>
                     )}
+                    {/* Meat Selector inside modal if needed */}
+                    {selectedItem.meatChoice && (() => {
+                      const itemIndex = activeCategory?.items.findIndex(it => it.name === selectedItem.name) ?? -1
+                      if (itemIndex === -1) return null
+                      return (
+                        <div className="mt-4">
+                          <label className="text-[10px] uppercase font-bold text-white/40 tracking-wider block mb-1">
+                            Choose your Meat Option
+                          </label>
+                          <MeatSelector
+                            isOpen={openDropdownIdx === 9999}
+                            onToggle={() => setOpenDropdownIdx(openDropdownIdx === 9999 ? null : 9999)}
+                            selected={selectedMeats[itemIndex] || 'Select meat option'}
+                            onSelect={(meat) => setSelectedMeats(prev => ({ ...prev, [itemIndex]: meat }))}
+                          />
+                        </div>
+                      )
+                    })()}
+
+                    {/* Add to Cart button inside modal */}
+                    <button
+                      onClick={() => {
+                        const itemIndex = activeCategory?.items.findIndex(it => it.name === selectedItem.name) ?? -1
+                        if (itemIndex > -1) {
+                          handleAddToCart(selectedItem, itemIndex)
+                          // Only close if validation passed
+                          if (!selectedItem.meatChoice || (selectedMeats[itemIndex] && selectedMeats[itemIndex] !== 'Select meat option')) {
+                            setSelectedItem(null)
+                          }
+                        }
+                      }}
+                      className="w-full mt-6 py-3 rounded-xl text-xs font-bold btn-pink flex items-center justify-center gap-1.5 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                    >
+                      🛒 Add to Cart — {selectedItem.price}
+                    </button>
                   </div>
                 </div>
               </div>
