@@ -30,8 +30,12 @@ export default function Menu() {
   // Cart and checkout states
   const [cart, setCart] = useState<CartItem[]>([])
   const [isCartOpen, setIsCartOpen] = useState(false)
-  const [tableNumber, setTableNumber] = useState('')
-  const [showTablePrompt, setShowTablePrompt] = useState(false)
+  const [checkoutStep, setCheckoutStep] = useState<'type_selection' | 'details_form' | 'closed'>('closed')
+  const [orderType, setOrderType] = useState<'dine_in' | 'take_out' | null>(null)
+  const [customerName, setCustomerName] = useState('')
+  const [customerPhone, setCustomerPhone] = useState('')
+  const [standNumber, setStandNumber] = useState('')
+  const [confirmationMessage, setConfirmationMessage] = useState('')
   const [showConfirmation, setShowConfirmation] = useState(false)
   const [orderNotes, setOrderNotes] = useState('')
   const [isSubmittingOrder, setIsSubmittingOrder] = useState(false)
@@ -92,7 +96,9 @@ export default function Menu() {
   }
 
   const handlePlaceOrder = async () => {
-    if (!tableNumber.trim()) return
+    if (!orderType) return
+    if (orderType === 'dine_in' && (!standNumber.trim() || !customerName.trim())) return
+    if (orderType === 'take_out' && !customerName.trim()) return
 
     setIsSubmittingOrder(true)
     try {
@@ -103,17 +109,31 @@ export default function Menu() {
         options: item.option || null
       }))
 
+      // Stand number is set to "1" for Take Out counter
+      const finalStandNumber = orderType === 'dine_in' ? standNumber.trim() : '1'
+
       const { error } = await supabase.from('omg_orders').insert({
-        table_number: tableNumber.trim(),
+        table_number: orderType === 'dine_in' ? `Stand ${standNumber.trim()}` : 'Take Out', // backwards compatibility fallback
         items: orderItems,
         subtotal: cartSubtotal,
         status: 'pending',
-        customer_note: orderNotes.trim() || null
+        customer_note: orderNotes.trim() || null,
+        order_type: orderType,
+        stand_number: finalStandNumber,
+        customer_name: customerName.trim(),
+        customer_phone: orderType === 'take_out' && customerPhone.trim() ? customerPhone.trim() : null
       })
 
       if (error) throw error
 
-      setShowTablePrompt(false)
+      // Design custom confirmation messages
+      if (orderType === 'dine_in') {
+        setConfirmationMessage(`Your order is on its way to Stand ${standNumber.trim()}! 🌸 Estimated time: 15-20 min`)
+      } else {
+        setConfirmationMessage(`Order received, ${customerName.trim()}! 🌸 We'll have it ready soon.`)
+      }
+
+      setCheckoutStep('closed')
       setShowConfirmation(true)
     } catch (err: any) {
       console.error('Error placing order:', err)
@@ -636,7 +656,10 @@ export default function Menu() {
 
                   {/* Place Order Button */}
                   <button
-                    onClick={() => setShowTablePrompt(true)}
+                    onClick={() => {
+                      setOrderType(null)
+                      setCheckoutStep('type_selection')
+                    }}
                     className="w-full py-3 rounded-xl text-sm font-bold btn-pink flex items-center justify-center gap-2 shadow-lg"
                   >
                     🚀 Place Order
@@ -647,10 +670,10 @@ export default function Menu() {
           </div>
         )}
 
-        {/* Table Number Prompt Modal */}
-        {showTablePrompt && (
+        {/* Step 1: Order Type Selection Modal */}
+        {checkoutStep === 'type_selection' && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in"
             style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur-6px' }}
           >
             <div
@@ -661,29 +684,148 @@ export default function Menu() {
                 boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
               }}
             >
-              <h3 className="font-display font-bold text-lg text-white mb-1">Table Number</h3>
-              <p className="text-xs text-white/50 mb-4">Please enter your table number to complete the order.</p>
+              <button
+                onClick={() => setCheckoutStep('closed')}
+                className="absolute top-3 right-3 text-white/50 hover:text-white"
+              >
+                <X size={18} />
+              </button>
+              <h3 className="font-display font-bold text-lg text-white mb-1">Select Order Type</h3>
+              <p className="text-xs text-white/50 mb-6">How would you like to receive your order?</p>
 
-              <input
-                type="text"
-                placeholder="E.g. Table 5, Bar 2..."
-                value={tableNumber}
-                onChange={e => setTableNumber(e.target.value)}
-                className="form-input w-full text-center text-sm py-2.5 mb-4 focus:ring-1 focus:ring-[#E91E8C]"
-                autoFocus
-              />
-
-              <div className="flex gap-2">
+              <div className="grid grid-cols-2 gap-4">
+                {/* Dine In Button */}
                 <button
-                  onClick={() => setShowTablePrompt(false)}
+                  onClick={() => {
+                    setOrderType('dine_in')
+                    setCheckoutStep('details_form')
+                  }}
+                  className="flex flex-col items-center justify-center p-5 rounded-xl border border-white/10 bg-[#161616] hover:border-[#E91E8C] transition-all hover:scale-[1.03] active:scale-[0.98] group"
+                >
+                  <span className="text-3xl mb-2 group-hover:scale-110 transition-transform">🍽️</span>
+                  <span className="text-xs font-bold text-white group-hover:text-[#FF6BB5] transition-colors">Dine In</span>
+                </button>
+
+                {/* Take Out Button */}
+                <button
+                  onClick={() => {
+                    setOrderType('take_out')
+                    setStandNumber('1') // Set stand number automatically to "1"
+                    setCheckoutStep('details_form')
+                  }}
+                  className="flex flex-col items-center justify-center p-5 rounded-xl border border-white/10 bg-[#161616] hover:border-[#E91E8C] transition-all hover:scale-[1.03] active:scale-[0.98] group"
+                >
+                  <span className="text-3xl mb-2 group-hover:scale-110 transition-transform">🥡</span>
+                  <span className="text-xs font-bold text-white group-hover:text-[#FF6BB5] transition-colors">Take Out</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Step 2: Checkout Details Form Modal */}
+        {checkoutStep === 'details_form' && orderType && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in"
+            style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur-6px' }}
+          >
+            <div
+              className="w-full max-w-sm p-6 rounded-2xl border text-center relative animate-scale-up"
+              style={{
+                background: '#121212',
+                borderColor: 'rgba(233,30,140,0.25)',
+                boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+              }}
+            >
+              <h3 className="font-display font-bold text-lg text-white mb-1">
+                {orderType === 'dine_in' ? '🍽️ Dine In Details' : '🥡 Take Out Details'}
+              </h3>
+              <p className="text-xs text-white/50 mb-4">Please fill in the information below.</p>
+
+              <div className="space-y-4 text-left">
+                {orderType === 'dine_in' ? (
+                  <>
+                    {/* Stand Number Input */}
+                    <div>
+                      <label className="text-[10px] uppercase font-bold text-white/40 tracking-wider block mb-1">
+                        Enter the number on your stand (Required)
+                      </label>
+                      <input
+                        type="number"
+                        placeholder="E.g. 5, 12..."
+                        value={standNumber}
+                        onChange={e => setStandNumber(e.target.value)}
+                        className="form-input w-full text-sm py-2 px-3 focus:ring-1 focus:ring-[#E91E8C]"
+                        required
+                        min="1"
+                      />
+                    </div>
+
+                    {/* Customer Name Input */}
+                    <div>
+                      <label className="text-[10px] uppercase font-bold text-white/40 tracking-wider block mb-1">
+                        Your Name (Required)
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="E.g. Ricardo..."
+                        value={customerName}
+                        onChange={e => setCustomerName(e.target.value)}
+                        className="form-input w-full text-sm py-2 px-3 focus:ring-1 focus:ring-[#E91E8C]"
+                        required
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* Customer Name Input */}
+                    <div>
+                      <label className="text-[10px] uppercase font-bold text-white/40 tracking-wider block mb-1">
+                        Your Name (Required)
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="E.g. Maria..."
+                        value={customerName}
+                        onChange={e => setCustomerName(e.target.value)}
+                        className="form-input w-full text-sm py-2 px-3 focus:ring-1 focus:ring-[#E91E8C]"
+                        required
+                      />
+                    </div>
+
+                    {/* Customer Phone Input */}
+                    <div>
+                      <label className="text-[10px] uppercase font-bold text-white/40 tracking-wider block mb-1">
+                        We'll text you when ready (optional)
+                      </label>
+                      <input
+                        type="tel"
+                        placeholder="E.g. 555-0199..."
+                        value={customerPhone}
+                        onChange={e => setCustomerPhone(e.target.value)}
+                        className="form-input w-full text-sm py-2 px-3 focus:ring-1 focus:ring-[#E91E8C]"
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Modal Buttons */}
+              <div className="flex gap-2 mt-6">
+                <button
+                  onClick={() => setCheckoutStep('type_selection')}
                   className="flex-1 py-2.5 rounded-xl border text-xs font-semibold text-white/70 hover:bg-white/5 transition-all"
                   style={{ borderColor: 'rgba(255,255,255,0.15)' }}
                 >
-                  Cancel
+                  Back
                 </button>
                 <button
                   onClick={handlePlaceOrder}
-                  disabled={!tableNumber.trim() || isSubmittingOrder}
+                  disabled={
+                    isSubmittingOrder ||
+                    !customerName.trim() ||
+                    (orderType === 'dine_in' && !standNumber.trim())
+                  }
                   className="flex-1 py-2.5 rounded-xl text-xs font-bold btn-pink disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmittingOrder ? 'Submitting...' : 'Confirm Order'}
@@ -696,7 +838,7 @@ export default function Menu() {
         {/* Confirmation Modal */}
         {showConfirmation && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in"
             style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur-6px' }}
           >
             <div
@@ -710,13 +852,16 @@ export default function Menu() {
               <span className="text-5xl block mb-4 animate-bounce">🌸</span>
               <h3 className="font-display font-bold text-xl text-[#FF6BB5] mb-2">Order Received!</h3>
               <p className="text-sm text-white/80 leading-relaxed mb-6">
-                Your order has been received! 🌸 Our kitchen staff is preparing your meal.
+                {confirmationMessage}
               </p>
               <button
                 onClick={() => {
                   setShowConfirmation(false)
                   setCart([])
-                  setTableNumber('')
+                  setCustomerName('')
+                  setCustomerPhone('')
+                  setStandNumber('')
+                  setOrderType(null)
                   setOrderNotes('')
                   setIsCartOpen(false)
                 }}

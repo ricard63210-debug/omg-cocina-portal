@@ -18,6 +18,10 @@ interface Order {
   subtotal: number
   status: 'pending' | 'preparing' | 'ready' | 'completed'
   customer_note?: string | null
+  order_type?: 'dine_in' | 'take_out' | null
+  stand_number?: string | null
+  customer_name?: string | null
+  customer_phone?: string | null
 }
 
 function playNotificationSound() {
@@ -502,8 +506,20 @@ export default function AdminPage() {
                           {/* Card Header */}
                           <div className="flex justify-between items-start gap-3 pb-3 mb-3 border-b border-white/5">
                             <div>
-                              <h4 className="font-display font-bold text-sm text-white">
-                                {order.table_number}
+                              <h4 className="font-display font-bold text-sm text-white flex flex-col gap-0.5">
+                                {order.order_type === 'take_out' ? (
+                                  <span>🥡 Take Out</span>
+                                ) : (
+                                  <span>🪑 Stand {order.stand_number || '1'}</span>
+                                )}
+                                <span className="text-[11px] font-medium text-[#D4AF37]">
+                                  {order.customer_name || 'Guest'}
+                                </span>
+                                {order.order_type === 'take_out' && order.customer_phone && (
+                                  <span className="text-[9px] text-white/50 font-normal">
+                                    📞 {order.customer_phone}
+                                  </span>
+                                )}
                               </h4>
                               <p className="text-[10px] text-white/40 mt-0.5">
                                 {formattedTime}
