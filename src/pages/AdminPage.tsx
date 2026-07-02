@@ -256,24 +256,32 @@ export default function AdminPage() {
         .channel('realtime-orders')
         .on(
           'postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'omg_orders' },
+          { event: '*', schema: 'public', table: 'omg_orders' },
           (payload) => {
-            console.log('Realtime Order Insert:', payload.new)
-            const newOrder = payload.new as Order
-            setOrders(prev => [newOrder, ...prev])
-            playNotificationSound()
+            console.log('Realtime Order Event Received:', payload)
+            
+            if (payload.eventType === 'INSERT') {
+              const newOrder = payload.new as Order
+              setOrders(prev => {
+                // Avoid duplicating the order if it's already in local state
+                if (prev.some(o => o.id === newOrder.id)) return prev
+                return [newOrder, ...prev]
+              })
+              playNotificationSound()
+            } else if (payload.eventType === 'UPDATE') {
+              const updatedOrder = payload.new as Order
+              setOrders(prev => prev.map(o => (o.id === updatedOrder.id ? updatedOrder : o)))
+            } else if (payload.eventType === 'DELETE') {
+              const deletedId = payload.old?.id
+              if (deletedId) {
+                setOrders(prev => prev.filter(o => o.id !== deletedId))
+              }
+            }
           }
         )
-        .on(
-          'postgres_changes',
-          { event: 'UPDATE', schema: 'public', table: 'omg_orders' },
-          (payload) => {
-            console.log('Realtime Order Update:', payload.new)
-            const updated = payload.new as Order
-            setOrders(prev => prev.map(o => (o.id === updated.id ? updated : o)))
-          }
-        )
-        .subscribe()
+        .subscribe((status) => {
+          console.log('Supabase Orders Realtime Status:', status)
+        })
 
       return () => {
         supabase.removeChannel(channel)
